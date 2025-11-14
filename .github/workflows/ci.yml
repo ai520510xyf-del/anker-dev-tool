@@ -1,5 +1,7 @@
 name: CI
 
+# CI 工作流：运行代码检查和测试
+
 on:
   push:
     branches: [main, develop]
@@ -49,7 +51,7 @@ jobs:
   docs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
-    needs: []  # 不依赖其他 job，独立运行
+    needs: [] # 不依赖其他 job，独立运行
     permissions:
       contents: read
       pages: write
