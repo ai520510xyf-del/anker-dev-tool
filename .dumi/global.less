@@ -326,8 +326,7 @@ button {
 // 内容区域 - 平铺布局，无卡片效果（参考 Ant Design）
 .dumi-default-content {
   background: transparent !important;
-  padding: 60px 64px 60px 64px !important; // 增大padding，右侧留出 TOC 空间
-  padding-right: 280px !important; // 为右侧 TOC 预留空间（220px + 60px margin）
+  padding: 3% 18% 3% 4% !important; // 使用百分比自适应，右侧为 TOC 预留空间
   box-shadow: none !important;
   border-radius: 0 !important;
   margin: 0 !important;
@@ -1248,7 +1247,7 @@ pre[class*='language-'] {
 
   // 内容区域
   .dumi-default-content {
-    padding: 32px 20px !important; // 移动端不需要右侧 padding，TOC 已隐藏
+    padding: 2% 3% !important; // 移动端使用百分比自适应，TOC 已隐藏
     margin: 0 !important;
 
     .markdown {
@@ -1337,7 +1336,7 @@ pre[class*='language-'] {
   }
 
   .dumi-default-content {
-    padding: 40px 280px 40px 32px !important; // 平板端也需要为 TOC 预留空间
+    padding: 2.5% 18% 2.5% 2% !important; // 平板端使用百分比自适应，为 TOC 预留空间
     margin: 0 !important;
 
     .markdown {
@@ -1367,7 +1366,7 @@ pre[class*='language-'] {
   }
 
   .dumi-default-content {
-    padding: 80px 280px 80px 120px !important; // 大屏也需要为 TOC 预留空间
+    padding: 4% 18% 4% 6% !important; // 大屏使用百分比自适应，为 TOC 预留空间
 
     .markdown {
       h2 {
