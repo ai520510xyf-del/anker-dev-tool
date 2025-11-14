@@ -1,0 +1,5 @@
+{
+  "buildCommand": "build",
+  "sandboxes": ["/template-cra"],
+  "node": "18"
+}

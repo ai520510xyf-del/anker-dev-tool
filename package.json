@@ -1,0 +1,136 @@
+{
+  "name": "anker-dev-tool",
+  "version": "0.1.4",
+  "description": "基于 Ant Design 的 React 业务组件库，提供开箱即用的高质量业务组件，助力企业级应用快速开发",
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "sideEffects": [
+    "*.css",
+    "*.less"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/index.esm.js",
+      "require": "./dist/index.cjs.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./style.css": "./dist/style.css"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "npm run clean && npm run type-check && tsc && vite build --mode lib",
+    "build:demo": "vite build",
+    "preview": "vite preview",
+    "clean": "rm -rf dist docs-dist .dumi/tmp .dumi/tmp-* .umi .umi-production node_modules/.cache",
+    "docs:dev": "dumi dev",
+    "docs:build": "dumi build",
+    "docs:preview": "dumi preview",
+    "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "lint:fix": "eslint src --ext ts,tsx --fix",
+    "format": "prettier --write \"src/**/*.{ts,tsx,json,css,less}\"",
+    "type-check": "tsc --noEmit",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "prepublishOnly": "npm run lint && npm run type-check && npm run build",
+    "prepare": "husky"
+  },
+  "keywords": [
+    "react",
+    "react-component",
+    "typescript",
+    "antd",
+    "ant-design",
+    "component-library",
+    "ui-components",
+    "business-components",
+    "approval",
+    "approval-flow",
+    "workflow",
+    "审批流程",
+    "审批详情",
+    "业务组件",
+    "企业级"
+  ],
+  "author": {
+    "name": "anker",
+    "email": "anker@example.com"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/anker/anker-dev-tool.git"
+  },
+  "homepage": "https://anker.github.io/anker-dev-tool",
+  "bugs": {
+    "url": "https://github.com/anker/anker-dev-tool/issues"
+  },
+  "peerDependencies": {
+    "antd": ">=5.0.0",
+    "axios": ">=0.19.0",
+    "react": ">=16.8.0",
+    "react-dom": ">=16.8.0"
+  },
+  "dependencies": {
+    "@ant-design/icons": "^5.0.0"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^20.1.0",
+    "@commitlint/config-conventional": "^20.0.0",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/node": "^20.0.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "@vitejs/plugin-react": "^4.0.0",
+    "@vitest/ui": "^3.2.4",
+    "antd": "^5.12.0",
+    "axios": "^1.6.0",
+    "dumi": "^2.1.0",
+    "eslint": "^8.50.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-react": "^7.33.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.4",
+    "husky": "^9.1.7",
+    "jsdom": "^26.1.0",
+    "less": "^4.2.0",
+    "lint-staged": "^15.5.2",
+    "prettier": "^3.0.0",
+    "prop-types": "^15.8.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "typescript": "^5.2.0",
+    "vite": "^5.0.0",
+    "vite-plugin-dts": "^3.6.0",
+    "vitest": "^3.2.4"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,css,less,md}": [
+      "prettier --write"
+    ]
+  }
+}

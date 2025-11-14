@@ -1,0 +1,33 @@
+// CSS Modules - 组件样式隔离，禁止全局样式污染
+.badgeApproved,
+.badgeRejected,
+.badgePending {
+  display: inline-block;
+  padding: 2px 8px;
+  font-size: var(--font-size-small);
+  border-radius: var(--radius-tag);
+  font-weight: 500;
+  line-height: 1.5;
+  height: auto;
+  box-sizing: border-box;
+  margin: 0;
+  vertical-align: middle;
+}
+
+.badgeApproved {
+  background: #f6ffed;
+  color: var(--color-success);
+  border: 1px solid #b7eb8f;
+}
+
+.badgeRejected {
+  background: #fff1f0;
+  color: var(--color-error);
+  border: 1px solid #ffccc7;
+}
+
+.badgePending {
+  background: #fafafa;
+  color: var(--color-pending);
+  border: 1px solid #d9d9d9;
+}

@@ -1,0 +1,57 @@
+// CSS Modules - 组件样式隔离，禁止全局样式污染
+.container {
+  padding: var(--spacing-card);
+}
+
+.section {
+  margin-bottom: var(--spacing-section);
+}
+
+.sectionTitle {
+  font-size: var(--font-size-body);
+  font-weight: 600;
+  margin: 0 0 16px 0;
+  padding: 0;
+  line-height: 1.5;
+  color: #333;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+}
+
+.divider {
+  margin: var(--spacing-section) 0;
+  padding: 12px 0;
+  text-align: center;
+  font-size: var(--font-size-small);
+  color: #8c8c8c;
+  border-top: 1px dashed #d9d9d9;
+  border-bottom: 1px dashed #d9d9d9;
+  line-height: 1.5;
+  box-sizing: border-box;
+}
+
+.footerNote {
+  margin-top: var(--spacing-section);
+  padding: 16px;
+  background: #fafafa;
+  border-radius: var(--radius-card);
+  font-size: var(--font-size-tiny);
+  color: #8c8c8c;
+  line-height: 1.5;
+  box-sizing: border-box;
+}
+
+.footerNote p {
+  margin: 4px 0;
+  padding: 0;
+  line-height: 1.5;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 16px;
+  }
+}

@@ -1,0 +1,68 @@
+// CSS Modules - 组件样式隔离，禁止全局样式污染
+.container {
+  background: linear-gradient(
+    135deg,
+    var(--color-primary) 0%,
+    var(--color-primary-dark) 100%
+  );
+  color: white;
+  padding: var(--spacing-card);
+  border-radius: var(--radius-card);
+  margin-bottom: var(--spacing-section);
+  box-sizing: border-box;
+  line-height: 1.5;
+}
+
+.title {
+  font-size: var(--font-size-title);
+  font-weight: 600;
+  margin: 0 0 8px 0;
+  line-height: 1.5;
+  padding: 0;
+}
+
+.serialNumber {
+  font-size: var(--font-size-small);
+  opacity: 0.9;
+  margin: 0 0 16px 0;
+  line-height: 1.5;
+  padding: 0;
+}
+
+.info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-item);
+}
+
+.infoItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  line-height: 1.5;
+  margin: 0;
+  padding: 0;
+}
+
+.label {
+  font-size: var(--font-size-small);
+  opacity: 0.8;
+  line-height: 1.5;
+  margin: 0;
+  padding: 0;
+}
+
+.value {
+  font-size: var(--font-size-body);
+  font-weight: 500;
+  line-height: 1.5;
+  margin: 0;
+  padding: 0;
+}
+
+@media (max-width: 768px) {
+  .info {
+    flex-direction: column;
+    gap: 12px;
+  }
+}

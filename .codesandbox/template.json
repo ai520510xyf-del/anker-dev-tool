@@ -1,0 +1,6 @@
+{
+  "title": "Anker Dev Tool Example",
+  "description": "基于 Ant Design 的 React 业务组件库示例",
+  "tags": ["react", "antd", "typescript", "component-library"],
+  "published": true
+}

@@ -1,0 +1,59 @@
+// CSS Modules - 组件样式隔离，禁止全局样式污染
+.button {
+  // 按钮样式
+}
+
+/* Backdrop */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 2000;
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Drawer */
+.drawer {
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 800px;
+  max-width: 90vw;
+  height: 100vh;
+  background: white;
+  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  z-index: 2001;
+  animation: slideIn 0.3s ease-out;
+  box-sizing: border-box;
+  /* 重置可能被全局样式影响的属性 */
+  line-height: 1.5;
+  margin: 0;
+  padding: 0;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .drawer {
+    width: 100vw;
+    max-width: 100vw;
+  }
+}

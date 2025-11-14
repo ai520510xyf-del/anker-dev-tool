@@ -1,0 +1,50 @@
+// CSS Modules - 组件样式隔离，禁止全局样式污染
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-card);
+  background: var(--color-primary);
+  color: white;
+  flex-shrink: 0;
+}
+
+.title {
+  font-size: 16px;
+  font-weight: 500;
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-family);
+  line-height: 1.5;
+  color: white; // 明确设置白色，避免被全局样式覆盖
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: calc(100% - 48px);
+  box-sizing: border-box;
+}
+
+.closeBtn {
+  width: 32px;
+  height: 32px;
+  min-height: 32px;
+  max-height: 32px;
+  border: none;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  font-size: 20px;
+  border-radius: var(--radius-card);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+  padding: 0;
+  margin: 0;
+  line-height: 1;
+  box-sizing: border-box;
+}
+
+.closeBtn:hover {
+  background: rgba(255, 255, 255, 0.3);
+}

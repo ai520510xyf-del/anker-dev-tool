@@ -1,0 +1,132 @@
+// CSS Modules - 组件样式隔离，禁止全局样式污染
+.container {
+  display: flex;
+  position: relative;
+  padding-bottom: var(--spacing-item);
+  box-sizing: border-box;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.timeClose {
+  background: var(--bg-time-close);
+  padding: 16px;
+  border-radius: var(--radius-card);
+  border-left: 3px solid var(--color-info);
+}
+
+.indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 16px;
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.dot.approved {
+  background: var(--color-success);
+}
+
+.dot.rejected {
+  background: var(--color-error);
+}
+
+.dot.pending {
+  background: var(--color-pending);
+}
+
+.line {
+  width: 2px;
+  flex-grow: 1;
+  background: #e8e8e8;
+  margin-top: 8px;
+}
+
+.content {
+  flex: 1;
+  min-width: 0;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.nodeName {
+  font-size: var(--font-size-body);
+  font-weight: 500;
+  color: #333;
+  line-height: 1.5;
+  margin: 0;
+  padding: 0;
+}
+
+.info {
+  margin-bottom: 8px;
+}
+
+.infoRow {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.label {
+  font-size: var(--font-size-small);
+  color: #8c8c8c;
+  line-height: 1.5;
+  margin: 0;
+  padding: 0;
+}
+
+.value {
+  font-size: var(--font-size-small);
+  color: #333;
+  line-height: 1.5;
+  margin: 0;
+  padding: 0;
+}
+
+.time {
+  font-size: var(--font-size-tiny);
+  color: #8c8c8c;
+  line-height: 1.5;
+  margin: 0;
+  padding: 0;
+}
+
+.comment {
+  background: #fafafa;
+  padding: 8px 12px;
+  border-radius: var(--radius-card);
+  margin-top: 8px;
+}
+
+.commentLabel {
+  font-size: var(--font-size-tiny);
+  color: #8c8c8c;
+  margin-right: 8px;
+}
+
+.commentText {
+  font-size: var(--font-size-small);
+  color: #333;
+}
+
+.timeCloseNote {
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: #fff7e6;
+  border: 1px solid #ffd591;
+  border-radius: var(--radius-card);
+  font-size: var(--font-size-small);
+  color: var(--color-warning);
+}
