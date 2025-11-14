@@ -49,6 +49,7 @@ jobs:
   docs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
+    needs: []  # 不依赖其他 job，独立运行
     permissions:
       contents: read
       pages: write
