@@ -206,7 +206,7 @@ button {
   background: transparent !important;
 }
 
-// 左侧边栏 - 参考 Ant Design 24 列栅格系统
+// 左侧边栏 - 使用百分比宽度
 .dumi-default-sidebar {
   flex: 0 0 auto !important;
   padding-right: 24px !important;
@@ -214,29 +214,25 @@ button {
   border-right: 1px solid #f0f0f0 !important;
   min-height: 100vh !important;
 
-  // 默认桌面端：6/24 列 = 25%
-  width: 25% !important;
-  max-width: 320px !important;
+  // 默认宽度：20%
+  width: 20% !important;
 
-  // xxl 超大屏 (>= 1600px)：5/24 列 ≈ 20.83%
+  // 所有屏幕尺寸统一使用 20%
   @media (min-width: 1600px) {
-    width: 20.83% !important;
+    width: 20% !important;
   }
 
-  // xl 大屏 (>= 1200px)：6/24 列 = 25%
   @media (min-width: 1200px) and (max-width: 1599px) {
-    width: 25% !important;
+    width: 20% !important;
   }
 
-  // lg 中屏 (>= 992px)：6/24 列 = 25%
   @media (min-width: 992px) and (max-width: 1199px) {
-    width: 25% !important;
+    width: 20% !important;
   }
 
-  // md 平板 (>= 768px)：8/24 列 ≈ 33.33%
+  // md 平板 (>= 768px)：保持 20%
   @media (min-width: 768px) and (max-width: 991px) {
-    width: 33.33% !important;
-    max-width: 280px !important;
+    width: 20% !important;
   }
 }
 
