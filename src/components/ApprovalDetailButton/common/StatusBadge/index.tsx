@@ -35,9 +35,8 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
 
 // Props 校验：PropTypes + TypeScript 类型
 StatusBadge.propTypes = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   status: PropTypes.oneOf(['approved', 'rejected', 'pending'])
-    .isRequired as any,
+    .isRequired as PropTypes.Validator<'approved' | 'rejected' | 'pending'>,
 };
 
 export default StatusBadge;
