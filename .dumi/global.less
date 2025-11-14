@@ -643,7 +643,7 @@ pre[class*='language-'] {
 
 .dumi-default-features {
   padding: 4% 4% !important; // 使用百分比自适应
-  max-width: none !important; // 移除固定宽度限制
+  max-width: min(100%, 1400px) !important; // 设置合理的最大宽度，保持自适应
   margin: 0 auto !important; // 居中显示
   width: 100% !important;
   box-sizing: border-box !important;
@@ -715,7 +715,7 @@ pre[class*='language-'] {
 .dumi-default-content {
   // 首页各个板块的间距统一优化
   .markdown {
-    max-width: none !important; // 移除固定宽度限制
+    max-width: min(100%, 1200px) !important; // 设置合理的最大宽度，保持自适应
     margin: 0 auto !important; // 居中显示
     padding: 0 4% !important; // 使用百分比自适应，防止内容贴边
 
@@ -1360,7 +1360,10 @@ pre[class*='language-'] {
   }
 
   .dumi-default-features {
-    max-width: none !important; // 移除固定宽度限制
+    max-width: min(
+      100%,
+      1600px
+    ) !important; // 大屏设置更大的最大宽度，保持自适应
     padding: 4% 5% !important; // 使用百分比自适应
     gap: 30px !important; // 大屏增大间距
   }
