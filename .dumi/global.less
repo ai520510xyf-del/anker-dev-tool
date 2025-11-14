@@ -563,7 +563,7 @@ pre[class*='language-'] {
 // Hero 区域样式优化 - 参考 Ant Design
 // ============================================
 .dumi-default-hero {
-  padding: 60px 48px !important; // 适中的padding，不会太高
+  padding: 3% 4% !important; // 使用百分比自适应
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
 
   h1 {
@@ -642,8 +642,8 @@ pre[class*='language-'] {
 }
 
 .dumi-default-features {
-  padding: 80px 48px !important; // 恢复合理的左右边距
-  max-width: 1200px !important; // 限制最大宽度，让卡片不会在大屏上过宽
+  padding: 4% 4% !important; // 使用百分比自适应
+  max-width: none !important; // 移除固定宽度限制
   margin: 0 auto !important; // 居中显示
   width: 100% !important;
   box-sizing: border-box !important;
@@ -716,8 +716,8 @@ pre[class*='language-'] {
   // 首页各个板块的间距统一优化
   .markdown {
     max-width: none !important; // 移除固定宽度限制
-    margin: 0 !important; // 不居中
-    padding: 0 24px !important; // 添加左右内边距，防止内容贴边
+    margin: 0 auto !important; // 居中显示
+    padding: 0 4% !important; // 使用百分比自适应，防止内容贴边
 
     h2 {
       font-size: 32px !important; // 增大标题字号
@@ -1179,7 +1179,7 @@ pre[class*='language-'] {
 @media (max-width: 768px) {
   // Hero 区域
   .dumi-default-hero {
-    padding: 60px 24px !important; // 增加上下padding
+    padding: 3% 3% !important; // 使用百分比自适应
 
     h1 {
       font-size: 32px !important; // 增大移动端标题
@@ -1199,7 +1199,7 @@ pre[class*='language-'] {
 
       a {
         width: 100% !important; // 按钮全宽
-        max-width: 320px !important;
+        max-width: 80% !important; // 使用百分比自适应
         justify-content: center !important;
         padding: 12px 24px !important;
       }
@@ -1208,11 +1208,11 @@ pre[class*='language-'] {
 
   // 特性卡片（移动端已在主样式中处理）
   .dumi-default-features {
-    padding: 60px 20px !important;
+    padding: 4% 3% !important; // 使用百分比自适应
     gap: 12px !important;
 
     .dumi-default-features-item {
-      padding: 24px 20px !important;
+      padding: 3% 3% !important; // 使用百分比自适应
     }
   }
 
@@ -1317,7 +1317,7 @@ pre[class*='language-'] {
 @media (min-width: 769px) and (max-width: 1024px) {
   // Hero 区域
   .dumi-default-hero {
-    padding: 70px 40px !important;
+    padding: 3% 4% !important; // 使用百分比自适应
 
     h1 {
       font-size: 42px !important;
@@ -1331,7 +1331,7 @@ pre[class*='language-'] {
 
   // 特性卡片（平板端已在主样式中处理）
   .dumi-default-features {
-    padding: 70px 40px !important;
+    padding: 4% 4% !important; // 使用百分比自适应
     gap: 20px !important;
   }
 
@@ -1356,12 +1356,12 @@ pre[class*='language-'] {
 // 大屏优化 (> 1440px)
 @media (min-width: 1440px) {
   .dumi-default-hero {
-    padding: 100px 80px !important;
+    padding: 4% 5% !important; // 使用百分比自适应
   }
 
   .dumi-default-features {
-    max-width: 1400px !important;
-    padding: 100px 80px !important;
+    max-width: none !important; // 移除固定宽度限制
+    padding: 4% 5% !important; // 使用百分比自适应
     gap: 30px !important; // 大屏增大间距
   }
 
