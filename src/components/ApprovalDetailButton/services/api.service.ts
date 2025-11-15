@@ -36,20 +36,18 @@ const getApiClient = (baseURL: string): AxiosInstance => {
  * @param code 审批实例 code
  * @param systemCode 系统 code
  * @param systemKey 系统密钥
- * @param apiBaseUrl API 基础地址
  */
 export async function fetchApprovalData(
   code: string,
   systemCode: string,
-  systemKey: string,
-  apiBaseUrl: string = DEFAULT_CONFIG.API_BASE_URL
+  systemKey: string
 ): Promise<ProcessedApprovalData> {
   // 参数验证
   if (!code || !systemCode || !systemKey) {
     throw new Error('缺少必填参数：code、systemCode、systemKey');
   }
 
-  const apiClient = getApiClient(apiBaseUrl);
+  const apiClient = getApiClient(DEFAULT_CONFIG.API_BASE_URL);
 
   try {
     const response = await apiClient.get<ApiResponse<ProcessedApprovalData>>(

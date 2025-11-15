@@ -58,7 +58,6 @@ const InTableDemo = () => {
             code={record.code}
             systemCode="srm"
             systemKey="srm_secret_key_001"
-            apiBaseUrl="https://cl-dev-tool-server.onrender.com/api"
             text="查看详情"
             buttonProps={{
               type: 'link',

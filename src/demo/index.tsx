@@ -30,7 +30,6 @@ const App: React.FC = () => {
               systemCode="srm"
               systemKey="srm_secret_key_001"
               text="审批流程"
-              apiBaseUrl="http://localhost:3000/api"
               onClose={() => {
                 console.log('审批详情弹窗已关闭');
               }}

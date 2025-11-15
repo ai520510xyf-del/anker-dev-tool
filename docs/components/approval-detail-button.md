@@ -51,12 +51,6 @@ toc: content
 
 <code src="../demos/ApprovalDetailButton/custom-button-style.tsx"></code>
 
-### 自定义 API 地址
-
-通过 `apiBaseUrl` 属性可以自定义 API 请求的基础地址，适用于不同环境的部署。
-
-<code src="../demos/ApprovalDetailButton/custom-api.tsx"></code>
-
 ### 事件回调
 
 通过 `onClose` 和 `onError` 回调函数，可以在弹窗关闭或发生错误时执行自定义逻辑。
@@ -73,16 +67,15 @@ toc: content
 
 ### ApprovalDetailButton
 
-| 参数        | 说明                                | 类型                                                       | 默认值                        | 必填 |
-| ----------- | ----------------------------------- | ---------------------------------------------------------- | ----------------------------- | ---- |
-| code        | 审批实例的唯一标识码                | `string`                                                   | -                             | 是   |
-| systemCode  | 业务系统的唯一标识码                | `string`                                                   | -                             | 是   |
-| systemKey   | 业务系统的密钥，用于 API 鉴权       | `string`                                                   | -                             | 是   |
-| text        | 按钮显示的文本内容                  | `string`                                                   | `'审批流程'`                  | 否   |
-| apiBaseUrl  | API 请求的基础地址，可根据环境配置  | `string`                                                   | `'http://localhost:3000/api'` | 否   |
-| buttonProps | 透传给 Ant Design Button 组件的属性 | [ButtonProps](https://ant.design/components/button-cn#api) | -                             | 否   |
-| onClose     | 弹窗关闭时的回调函数                | `() => void`                                               | -                             | 否   |
-| onError     | 数据加载失败时的回调函数            | `(error: Error) => void`                                   | -                             | 否   |
+| 参数        | 说明                                | 类型                                                       | 默认值       | 必填 |
+| ----------- | ----------------------------------- | ---------------------------------------------------------- | ------------ | ---- |
+| code        | 审批实例的唯一标识码                | `string`                                                   | -            | 是   |
+| systemCode  | 业务系统的唯一标识码                | `string`                                                   | -            | 是   |
+| systemKey   | 业务系统的密钥，用于 API 鉴权       | `string`                                                   | -            | 是   |
+| text        | 按钮显示的文本内容                  | `string`                                                   | `'审批流程'` | 否   |
+| buttonProps | 透传给 Ant Design Button 组件的属性 | [ButtonProps](https://ant.design/components/button-cn#api) | -            | 否   |
+| onClose     | 弹窗关闭时的回调函数                | `() => void`                                               | -            | 否   |
+| onError     | 数据加载失败时的回调函数            | `(error: Error) => void`                                   | -            | 否   |
 
 ## 设计指引
 

@@ -19,8 +19,6 @@ export interface ApprovalDetailButtonProps {
   systemKey: string;
   /** 按钮文本，默认：'审批流程' */
   text?: string;
-  /** API 基础地址，默认：'http://localhost:3000/api' */
-  apiBaseUrl?: string;
   /** Button 组件的其他属性 */
   buttonProps?: ButtonProps;
   /** 关闭回调 */
@@ -34,7 +32,6 @@ const ApprovalDetailButton: React.FC<ApprovalDetailButtonProps> = ({
   systemCode,
   systemKey,
   text = DEFAULT_CONFIG.BUTTON_TEXT,
-  apiBaseUrl,
   buttonProps,
   onClose,
   onError,
@@ -93,7 +90,6 @@ const ApprovalDetailButton: React.FC<ApprovalDetailButtonProps> = ({
               code={code}
               systemCode={systemCode}
               systemKey={systemKey}
-              apiBaseUrl={apiBaseUrl}
               onError={onError}
               onClose={handleClose}
             />
@@ -110,7 +106,6 @@ ApprovalDetailButton.propTypes = {
   systemCode: PropTypes.string.isRequired,
   systemKey: PropTypes.string.isRequired,
   text: PropTypes.string,
-  apiBaseUrl: PropTypes.string,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   buttonProps: PropTypes.object as any,
   onClose: PropTypes.func,

@@ -252,19 +252,6 @@ import zhCN from 'antd/locale/zh_CN';
 }
 ```
 
-### 如何自定义 API 地址？
-
-使用 `apiBaseUrl` 属性：
-
-```ts
-<ApprovalDetailButton
-  code="xxx"
-  systemCode="xxx"
-  systemKey="xxx"
-  apiBaseUrl="https://your-api.com"
-/>
-```
-
 ## 🔗 下一步
 
 - 查看 [组件文档](/components/approval-detail-button) 了解详细的 API 和示例

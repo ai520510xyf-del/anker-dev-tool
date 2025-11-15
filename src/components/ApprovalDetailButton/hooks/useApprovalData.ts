@@ -12,13 +12,11 @@ import { fetchApprovalData } from '../services/api.service';
  * @param code 审批实例 code
  * @param systemCode 系统 code
  * @param systemKey 系统密钥
- * @param apiBaseUrl API 基础地址
  */
 export function useApprovalData(
   code: string,
   systemCode: string,
-  systemKey: string,
-  apiBaseUrl?: string
+  systemKey: string
 ) {
   const [data, setData] = useState<ProcessedApprovalData | null>(null);
   const [loading, setLoading] = useState(false);
@@ -35,12 +33,7 @@ export function useApprovalData(
     try {
       setLoading(true);
       setError(null);
-      const result = await fetchApprovalData(
-        code,
-        systemCode,
-        systemKey,
-        apiBaseUrl
-      );
+      const result = await fetchApprovalData(code, systemCode, systemKey);
       setData(result);
     } catch (err) {
       setError(err instanceof Error ? err : new Error('获取审批数据失败'));
@@ -48,7 +41,7 @@ export function useApprovalData(
     } finally {
       setLoading(false);
     }
-  }, [code, systemCode, systemKey, apiBaseUrl]);
+  }, [code, systemCode, systemKey]);
 
   useEffect(() => {
     fetchData();

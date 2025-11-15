@@ -40,16 +40,15 @@ function App() {
 
 ## Props
 
-| 属性        | 类型                   | 必填 | 默认值                      | 说明                                              |
-| ----------- | ---------------------- | ---- | --------------------------- | ------------------------------------------------- |
-| code        | string                 | 是   | -                           | 审批实例 code                                     |
-| systemCode  | string                 | 是   | -                           | 系统 code（如：srm、demo）                        |
-| systemKey   | string                 | 是   | -                           | 系统密钥                                          |
-| text        | string                 | 否   | '审批流程'                  | 按钮文本                                          |
-| apiBaseUrl  | string                 | 否   | 'http://localhost:3000/api' | API 基础地址                                      |
-| buttonProps | ButtonProps            | 否   | -                           | Button 组件的其他属性，会透传给 Ant Design Button |
-| onClose     | () => void             | 否   | -                           | 关闭弹窗回调                                      |
-| onError     | (error: Error) => void | 否   | -                           | 错误回调                                          |
+| 属性        | 类型                   | 必填 | 默认值     | 说明                                              |
+| ----------- | ---------------------- | ---- | ---------- | ------------------------------------------------- |
+| code        | string                 | 是   | -          | 审批实例 code                                     |
+| systemCode  | string                 | 是   | -          | 系统 code（如：srm、demo）                        |
+| systemKey   | string                 | 是   | -          | 系统密钥                                          |
+| text        | string                 | 否   | '审批流程' | 按钮文本                                          |
+| buttonProps | ButtonProps            | 否   | -          | Button 组件的其他属性，会透传给 Ant Design Button |
+| onClose     | () => void             | 否   | -          | 关闭弹窗回调                                      |
+| onError     | (error: Error) => void | 否   | -          | 错误回调                                          |
 
 ## 使用示例
 
@@ -102,7 +101,6 @@ function MyComponent() {
       code="447F8A25-3C7F-4B18-8F44-7242680D9477"
       systemCode="srm"
       systemKey="srm_secret_key_001"
-      apiBaseUrl="https://api.example.com/api"
     />
   );
 }
@@ -193,13 +191,14 @@ function MyComponent() {
 ### 接口地址
 
 ```
-GET {apiBaseUrl}/approval/{code}
+GET https://cl-dev-tool-server.onrender.com/api/approval/{code}
 ```
 
 **路径参数**:
 
-- `{apiBaseUrl}`: API 基础地址，默认 `http://localhost:3000/api`
 - `{code}`: 审批实例 code（路径参数）
+
+**注意**: API 地址已内置在组件中，无需配置。
 
 ### 请求说明
 
@@ -518,7 +517,6 @@ export interface ApprovalDetailButtonProps {
   systemCode: string;
   systemKey: string;
   text?: string;
-  apiBaseUrl?: string;
   buttonProps?: ButtonProps;
   onClose?: () => void;
   onError?: (error: Error) => void;

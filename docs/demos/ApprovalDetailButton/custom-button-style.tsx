@@ -18,7 +18,6 @@ const CustomButtonStyleDemo = () => {
         code="447F8A25-3C7F-4B18-8F44-7242680D9477"
         systemCode="srm"
         systemKey="srm_secret_key_001"
-        apiBaseUrl="https://cl-dev-tool-server.onrender.com/api"
         text="主要按钮"
         buttonProps={{
           type: 'primary',
@@ -28,7 +27,6 @@ const CustomButtonStyleDemo = () => {
         code="447F8A25-3C7F-4B18-8F44-7242680D9477"
         systemCode="srm"
         systemKey="srm_secret_key_001"
-        apiBaseUrl="https://cl-dev-tool-server.onrender.com/api"
         text="虚线按钮"
         buttonProps={{
           type: 'dashed',
@@ -38,7 +36,6 @@ const CustomButtonStyleDemo = () => {
         code="447F8A25-3C7F-4B18-8F44-7242680D9477"
         systemCode="srm"
         systemKey="srm_secret_key_001"
-        apiBaseUrl="https://cl-dev-tool-server.onrender.com/api"
         text="链接按钮"
         buttonProps={{
           type: 'link',
@@ -48,7 +45,6 @@ const CustomButtonStyleDemo = () => {
         code="447F8A25-3C7F-4B18-8F44-7242680D9477"
         systemCode="srm"
         systemKey="srm_secret_key_001"
-        apiBaseUrl="https://cl-dev-tool-server.onrender.com/api"
         text="带图标"
         buttonProps={{
           icon: <EyeOutlined />,
@@ -59,7 +55,6 @@ const CustomButtonStyleDemo = () => {
         code="447F8A25-3C7F-4B18-8F44-7242680D9477"
         systemCode="srm"
         systemKey="srm_secret_key_001"
-        apiBaseUrl="https://cl-dev-tool-server.onrender.com/api"
         text="查看详情"
         buttonProps={{
           icon: <FileSearchOutlined />,
@@ -70,7 +65,6 @@ const CustomButtonStyleDemo = () => {
         code="447F8A25-3C7F-4B18-8F44-7242680D9477"
         systemCode="srm"
         systemKey="srm_secret_key_001"
-        apiBaseUrl="https://cl-dev-tool-server.onrender.com/api"
         text="小尺寸"
         buttonProps={{
           size: 'small',
@@ -81,7 +75,6 @@ const CustomButtonStyleDemo = () => {
         code="447F8A25-3C7F-4B18-8F44-7242680D9477"
         systemCode="srm"
         systemKey="srm_secret_key_001"
-        apiBaseUrl="https://cl-dev-tool-server.onrender.com/api"
         text="大尺寸"
         buttonProps={{
           size: 'large',
@@ -92,7 +85,6 @@ const CustomButtonStyleDemo = () => {
         code="447F8A25-3C7F-4B18-8F44-7242680D9477"
         systemCode="srm"
         systemKey="srm_secret_key_001"
-        apiBaseUrl="https://cl-dev-tool-server.onrender.com/api"
         text="危险按钮"
         buttonProps={{
           danger: true,

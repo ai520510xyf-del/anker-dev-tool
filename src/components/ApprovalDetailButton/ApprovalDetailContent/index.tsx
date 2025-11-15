@@ -21,8 +21,6 @@ export interface ApprovalDetailContentProps {
   systemCode: string;
   /** 系统密钥 */
   systemKey: string;
-  /** API 基础地址 */
-  apiBaseUrl?: string;
   /** 错误回调 */
   onError?: (error: Error) => void;
   /** 关闭回调 */
@@ -33,15 +31,13 @@ const ApprovalDetailContent: React.FC<ApprovalDetailContentProps> = ({
   code,
   systemCode,
   systemKey,
-  apiBaseUrl,
   onError,
   onClose,
 }) => {
   const { data, loading, error, refetch } = useApprovalData(
     code,
     systemCode,
-    systemKey,
-    apiBaseUrl
+    systemKey
   );
 
   // 判断是否应该自动刷新
@@ -116,7 +112,6 @@ ApprovalDetailContent.propTypes = {
   code: PropTypes.string.isRequired,
   systemCode: PropTypes.string.isRequired,
   systemKey: PropTypes.string.isRequired,
-  apiBaseUrl: PropTypes.string,
   onError: PropTypes.func,
   onClose: PropTypes.func,
 };

@@ -130,19 +130,6 @@ npm install --save-dev @types/react @types/react-dom
 
 ## ⚙️ 功能相关
 
-### 如何自定义 API 请求地址？
-
-使用 `apiBaseUrl` 属性：
-
-```ts
-<ApprovalDetailButton
-  code="xxx"
-  systemCode="xxx"
-  systemKey="xxx"
-  apiBaseUrl="https://your-api-domain.com"
-/>
-```
-
 ### API 请求失败怎么办？
 
 1. 检查网络连接
