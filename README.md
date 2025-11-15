@@ -6,7 +6,7 @@
 
 [![NPM version](https://img.shields.io/npm/v/cl-dev-tool.svg?style=flat)](https://npmjs.org/package/cl-dev-tool)
 [![NPM downloads](https://img.shields.io/npm/dm/cl-dev-tool.svg?style=flat)](https://npmjs.org/package/cl-dev-tool)
-[![License](https://img.shields.io/npm/l/anker-dev-tool.svg?style=flat)](https://github.com/ai520510xyf-del/cl-dev-tool/blob/main/LICENSE)
+[![License](https://img.shields.io/npm/l/cl-dev-tool.svg?style=flat)](https://github.com/ai520510xyf-del/cl-dev-tool/blob/main/LICENSE)
 
 [English](./README.md) | 简体中文
 
