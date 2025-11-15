@@ -35,5 +35,6 @@ export const config = {
     crm: process.env.CRM_SYSTEM_KEY || '',
     oa: process.env.OA_SYSTEM_KEY || '',
     demo: process.env.DEMO_SYSTEM_KEY || '',
+    srm: process.env.SRM_SYSTEM_KEY || '',
   },
 };
