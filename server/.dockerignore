@@ -1,0 +1,14 @@
+node_modules
+dist
+logs
+*.log
+.env
+.env.local
+.git
+.gitignore
+README.md
+.eslintrc.cjs
+tsconfig.json
+*.test.ts
+*.test.js
+

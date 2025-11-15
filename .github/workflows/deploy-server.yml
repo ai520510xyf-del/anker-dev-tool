@@ -1,0 +1,82 @@
+name: Deploy Server
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'server/**'
+      - '.github/workflows/deploy-server.yml'
+  workflow_dispatch: # 允许手动触发
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18.x'
+          cache: 'npm'
+
+      - name: Install server dependencies
+        run: npm run server:install
+
+      - name: Build server
+        run: npm run server:build
+
+      - name: Create deployment package
+        run: |
+          cd server
+          mkdir -p deploy
+          cp -r dist deploy/
+          cp package.json deploy/
+          cp .env.example deploy/.env
+          # 注意：实际部署时需要配置真实的 .env 文件
+          echo "部署包已创建"
+
+      - name: Upload deployment artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: server-deployment
+          path: server/deploy
+          retention-days: 30
+
+      # 部署选项 1: 使用 Docker 构建镜像（需要配置 Docker Registry）
+      # - name: Set up Docker Buildx
+      #   uses: docker/setup-buildx-action@v3
+      #
+      # - name: Login to Docker Registry
+      #   uses: docker/login-action@v3
+      #   with:
+      #     registry: ${{ secrets.DOCKER_REGISTRY }}
+      #     username: ${{ secrets.DOCKER_USERNAME }}
+      #     password: ${{ secrets.DOCKER_PASSWORD }}
+      #
+      # - name: Build and push Docker image
+      #   uses: docker/build-push-action@v5
+      #   with:
+      #     context: ./server
+      #     push: true
+      #     tags: ${{ secrets.DOCKER_REGISTRY }}/anker-dev-tool-server:latest
+
+      # 部署选项 2: 部署到服务器 via SSH（需要配置服务器信息）
+      # - name: Deploy to server via SSH
+      #   uses: appleboy/ssh-action@v1.0.0
+      #   with:
+      #     host: ${{ secrets.SERVER_HOST }}
+      #     username: ${{ secrets.SERVER_USER }}
+      #     key: ${{ secrets.SERVER_SSH_KEY }}
+      #     script: |
+      #       cd /opt/anker-dev-tool-server
+      #       git pull
+      #       npm run server:install
+      #       npm run server:build
+      #       pm2 restart anker-dev-tool-server || pm2 start server/dist/index.js --name anker-dev-tool-server
+
+      # 部署选项 3: 使用云平台（如 Railway、Render、Vercel 等）
+      # 这些平台通常通过 Git 自动部署，无需额外配置
+
