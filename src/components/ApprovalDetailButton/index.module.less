@@ -16,6 +16,7 @@
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -26,8 +27,9 @@
   position: fixed;
   right: 0;
   top: 0;
-  width: 800px;
-  max-width: 90vw;
+  width: 40%;
+  min-width: 320px;
+  max-width: 800px;
   height: 100vh;
   background: white;
   box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
@@ -46,14 +48,33 @@
   from {
     transform: translateX(100%);
   }
+
   to {
     transform: translateX(0);
   }
 }
 
+/* 中等屏幕（平板） */
+@media (max-width: 1200px) {
+  .drawer {
+    width: 50%;
+    max-width: 600px;
+  }
+}
+
+/* 小屏幕（手机） */
 @media (max-width: 768px) {
   .drawer {
-    width: 100vw;
+    width: 90%;
+    max-width: 90vw;
+    min-width: 0;
+  }
+}
+
+/* 超小屏幕 */
+@media (max-width: 480px) {
+  .drawer {
+    width: 100%;
     max-width: 100vw;
   }
 }
