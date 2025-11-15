@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: cl-dev-tool-server
+    env: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: LOG_LEVEL
+        value: info
+      # 以下环境变量需要在 Render Dashboard 中配置
+      # - key: FEISHU_APP_ID
+      #   value: your_app_id
+      # - key: FEISHU_APP_SECRET
+      #   value: your_app_secret
+      # - key: FEISHU_BASE_URL
+      #   value: https://open.feishu.cn
+      # - key: DEMO_SYSTEM_KEY
+      #   value: demo_secret_key_000
+      # - key: SRM_SYSTEM_KEY
+      #   value: srm_secret_key_001
+

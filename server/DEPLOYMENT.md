@@ -12,16 +12,30 @@
 4. 配置环境变量（从 `.env.example` 复制）
 5. Railway 会自动构建和部署
 
-#### Render
+#### Render（推荐，免费）
 
-1. 访问 [Render](https://render.com)
-2. 创建新的 Web Service
-3. 连接 GitHub 仓库
-4. 设置：
+1. 访问 [Render](https://render.com) 并注册账户
+2. 点击 "New +" → "Web Service"
+3. 连接 GitHub 仓库 `ai520510xyf-del/cl-dev-tool`
+4. 配置服务：
+   - **Name**: `cl-dev-tool-server`（或自定义）
    - **Root Directory**: `server`
+   - **Environment**: `Node`
    - **Build Command**: `npm install && npm run build`
    - **Start Command**: `npm start`
-5. 配置环境变量
+   - **Plan**: `Free`（免费计划）
+5. 配置环境变量（在 Environment 部分）：
+   - `FEISHU_APP_ID`: `cli_a5a213b8643bd00b`
+   - `FEISHU_APP_SECRET`: `9D3VogVdOyaHvfhfCkY2celMNWvTlyRs`
+   - `NODE_ENV`: `production`
+   - `PORT`: `3000`（Render 会自动设置，但可以显式指定）
+   - `LOG_LEVEL`: `info`
+   - `DEMO_SYSTEM_KEY`: `demo_secret_key_000`
+   - `SRM_SYSTEM_KEY`: `srm_secret_key_001`
+   - 其他系统密钥（可选）
+6. 点击 "Create Web Service" 开始部署
+
+**注意**：Render 免费计划的服务在 15 分钟无活动后会休眠，首次访问需要几秒唤醒时间。
 
 #### Vercel / Netlify Functions
 
