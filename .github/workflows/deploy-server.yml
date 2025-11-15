@@ -71,11 +71,11 @@ jobs:
       #     username: ${{ secrets.SERVER_USER }}
       #     key: ${{ secrets.SERVER_SSH_KEY }}
       #     script: |
-      #       cd /opt/anker-dev-tool-server
+      #       cd /opt/cl-dev-tool-server
       #       git pull
       #       npm run server:install
       #       npm run server:build
-      #       pm2 restart anker-dev-tool-server || pm2 start server/dist/index.js --name anker-dev-tool-server
+      #       pm2 restart cl-dev-tool-server || pm2 start server/dist/index.js --name cl-dev-tool-server
 
       # 部署选项 3: 使用云平台（如 Railway、Render、Vercel 等）
       # 这些平台通常通过 Git 自动部署，无需额外配置

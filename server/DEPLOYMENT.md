@@ -80,7 +80,7 @@ cp .env.example .env
 
 # 使用 PM2 启动
 npm install -g pm2
-pm2 start dist/index.js --name anker-dev-tool-server
+pm2 start dist/index.js --name cl-dev-tool-server
 pm2 save
 pm2 startup
 ```
