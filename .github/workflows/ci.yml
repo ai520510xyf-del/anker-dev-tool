@@ -40,6 +40,12 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Install server dependencies
+        run: npm run server:install
+
+      - name: Build server
+        run: npm run server:build
+
       - name: Upload coverage to Codecov
         if: matrix.node-version == '18.x'
         uses: codecov/codecov-action@v3
@@ -85,3 +91,35 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+  server:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    needs: [] # 独立运行
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18.x'
+          cache: 'npm'
+
+      - name: Install server dependencies
+        run: npm run server:install
+
+      - name: Run server lint
+        run: npm run lint:server || true
+
+      - name: Run server type check
+        run: npm run type-check:server || true
+
+      - name: Build server
+        run: npm run server:build
+
+      - name: Upload server artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: server-dist
+          path: server/dist
+          retention-days: 7

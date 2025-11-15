@@ -44,3 +44,9 @@ docs-dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 
+# Server
+server/dist
+server/logs
+server/.env
+server/node_modules
+
