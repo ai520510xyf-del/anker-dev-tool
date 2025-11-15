@@ -35,7 +35,7 @@ const CustomApiDemo = () => {
           code="447F8A25-3C7F-4B18-8F44-7242680D9477"
           systemCode="srm"
           systemKey="srm_secret_key_001"
-          apiBaseUrl="https://api.example.com"
+          apiBaseUrl="https://cl-dev-tool-server.onrender.com/api"
           text="生产环境"
         />
       </div>

@@ -13,18 +13,21 @@ const CustomTextDemo = () => {
         code="447F8A25-3C7F-4B18-8F44-7242680D9477"
         systemCode="srm"
         systemKey="srm_secret_key_001"
+        apiBaseUrl="https://cl-dev-tool-server.onrender.com/api"
         text="查看审批详情"
       />
       <ApprovalDetailButton
         code="447F8A25-3C7F-4B18-8F44-7242680D9477"
         systemCode="srm"
         systemKey="srm_secret_key_001"
+        apiBaseUrl="https://cl-dev-tool-server.onrender.com/api"
         text="审批进度"
       />
       <ApprovalDetailButton
         code="447F8A25-3C7F-4B18-8F44-7242680D9477"
         systemCode="srm"
         systemKey="srm_secret_key_001"
+        apiBaseUrl="https://cl-dev-tool-server.onrender.com/api"
         text="流程详情"
       />
     </Space>
