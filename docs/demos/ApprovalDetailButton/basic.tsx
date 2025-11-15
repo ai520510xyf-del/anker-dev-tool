@@ -3,7 +3,7 @@
  * description: 最简单的用法，只需要传入必填的 `code`、`systemCode` 和 `systemKey` 属性即可。点击按钮会从右侧滑出侧边弹窗，展示完整的审批流程。
  */
 import React from 'react';
-import ApprovalDetailButton from '@/components/ApprovalDetailButton';
+import { ApprovalDetailButton } from 'cl-dev-tool';
 
 const BasicDemo = () => {
   return (

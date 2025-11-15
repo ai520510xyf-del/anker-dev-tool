@@ -4,7 +4,7 @@
  */
 import React from 'react';
 import { Space } from 'antd';
-import ApprovalDetailButton from '@/components/ApprovalDetailButton';
+import { ApprovalDetailButton } from 'cl-dev-tool';
 
 const CustomTextDemo = () => {
   return (

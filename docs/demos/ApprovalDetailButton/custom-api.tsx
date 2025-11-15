@@ -4,7 +4,7 @@
  */
 import React from 'react';
 import { Space, Tag } from 'antd';
-import ApprovalDetailButton from '@/components/ApprovalDetailButton';
+import { ApprovalDetailButton } from 'cl-dev-tool';
 
 const CustomApiDemo = () => {
   return (

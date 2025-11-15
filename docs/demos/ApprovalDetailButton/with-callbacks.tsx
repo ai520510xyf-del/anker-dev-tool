@@ -4,7 +4,7 @@
  */
 import React, { useState } from 'react';
 import { message, Space, Typography } from 'antd';
-import ApprovalDetailButton from '@/components/ApprovalDetailButton';
+import { ApprovalDetailButton } from 'cl-dev-tool';
 
 const { Text } = Typography;
 

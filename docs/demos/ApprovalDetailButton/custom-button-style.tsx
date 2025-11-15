@@ -9,7 +9,7 @@ import {
   FileSearchOutlined,
   CheckCircleOutlined,
 } from '@ant-design/icons';
-import ApprovalDetailButton from '@/components/ApprovalDetailButton';
+import { ApprovalDetailButton } from 'cl-dev-tool';
 
 const CustomButtonStyleDemo = () => {
   return (

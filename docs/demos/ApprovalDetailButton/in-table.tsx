@@ -5,7 +5,7 @@
 import React from 'react';
 import { Table, Tag, Space } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
-import ApprovalDetailButton from '@/components/ApprovalDetailButton';
+import { ApprovalDetailButton } from 'cl-dev-tool';
 
 interface DataType {
   key: string;
