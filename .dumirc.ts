@@ -76,6 +76,7 @@ export default defineConfig({
   },
   alias: {
     '@': require('path').resolve(__dirname, 'src'),
+    'cl-dev-tool': require('path').resolve(__dirname, 'src'),
   },
   lessLoader: {
     javascriptEnabled: true,
