@@ -76,19 +76,19 @@
 ### 查看当前版本
 
 ```bash
-npm list anker-dev-tool
+npm list cl-dev-tool
 ```
 
 ### 升级到最新版本
 
 ```bash
-npm update anker-dev-tool
+npm update cl-dev-tool
 ```
 
 ### 升级到指定版本
 
 ```bash
-npm install anker-dev-tool@0.1.0
+npm install cl-dev-tool@0.1.0
 ```
 
 ---
@@ -96,5 +96,5 @@ npm install anker-dev-tool@0.1.0
 ## 相关链接
 
 - [GitHub Releases](https://github.com/ai520510xyf-del/cl-dev-tool/releases)
-- [npm Package](https://www.npmjs.com/package/anker-dev-tool)
-- [文档网站](https://ai520510xyf-del.github.io/anker-dev-tool)
+- [npm Package](https://www.npmjs.com/package/cl-dev-tool)
+- [文档网站](https://ai520510xyf-del.github.io/cl-dev-tool)

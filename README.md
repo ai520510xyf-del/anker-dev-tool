@@ -4,8 +4,8 @@
 
 企业级 React 业务组件库，基于 Ant Design 构建，专注于提供高质量、开箱即用的业务场景组件
 
-[![NPM version](https://img.shields.io/npm/v/anker-dev-tool.svg?style=flat)](https://npmjs.org/package/anker-dev-tool)
-[![NPM downloads](https://img.shields.io/npm/dm/anker-dev-tool.svg?style=flat)](https://npmjs.org/package/anker-dev-tool)
+[![NPM version](https://img.shields.io/npm/v/cl-dev-tool.svg?style=flat)](https://npmjs.org/package/cl-dev-tool)
+[![NPM downloads](https://img.shields.io/npm/dm/cl-dev-tool.svg?style=flat)](https://npmjs.org/package/cl-dev-tool)
 [![License](https://img.shields.io/npm/l/anker-dev-tool.svg?style=flat)](https://github.com/ai520510xyf-del/cl-dev-tool/blob/main/LICENSE)
 
 [English](./README.md) | 简体中文
@@ -27,13 +27,13 @@
 
 ```bash
 # 使用 npm
-npm install anker-dev-tool
+npm install cl-dev-tool
 
 # 使用 yarn
-yarn add anker-dev-tool
+yarn add cl-dev-tool
 
 # 使用 pnpm
-pnpm add anker-dev-tool
+pnpm add cl-dev-tool
 ```
 
 ### 依赖要求
@@ -53,7 +53,7 @@ pnpm add anker-dev-tool
 
 ```tsx
 import React from 'react';
-import { ApprovalDetailButton } from 'anker-dev-tool';
+import { ApprovalDetailButton } from 'cl-dev-tool';
 
 const App = () => {
   return (
@@ -74,7 +74,7 @@ export default App;
 ```tsx
 import React from 'react';
 import { ConfigProvider } from 'antd';
-import { ApprovalDetailButton } from 'anker-dev-tool';
+import { ApprovalDetailButton } from 'cl-dev-tool';
 import zhCN from 'antd/locale/zh_CN';
 
 const App = () => {
@@ -86,13 +86,13 @@ const App = () => {
 };
 ```
 
-更多示例请参考 [快速开始文档](https://anker.github.io/anker-dev-tool/guide)。
+更多示例请参考 [快速开始文档](https://ai520510xyf-del.github.io/cl-dev-tool/guide)。
 
 ## 📚 组件列表
 
-| 组件名称                                                                                         | 说明                           | 版本   |
-| ------------------------------------------------------------------------------------------------ | ------------------------------ | ------ |
-| [ApprovalDetailButton](https://anker.github.io/anker-dev-tool/components/approval-detail-button) | 审批详情按钮，展示完整审批流程 | 0.1.0+ |
+| 组件名称                                                                                                | 说明                           | 版本   |
+| ------------------------------------------------------------------------------------------------------- | ------------------------------ | ------ |
+| [ApprovalDetailButton](https://ai520510xyf-del.github.io/cl-dev-tool/components/approval-detail-button) | 审批详情按钮，展示完整审批流程 | 0.1.0+ |
 
 更多组件正在开发中...
 
@@ -106,8 +106,8 @@ const App = () => {
 
 ## 🔗 链接
 
-- [文档网站](https://anker.github.io/anker-dev-tool)
-- [组件文档](https://anker.github.io/anker-dev-tool/components/approval-detail-button)
+- [文档网站](https://ai520510xyf-del.github.io/cl-dev-tool)
+- [组件文档](https://ai520510xyf-del.github.io/cl-dev-tool/components/approval-detail-button)
 - [更新日志](./CHANGELOG.md)
 - [贡献指南](./CONTRIBUTING.md)
 - [问题反馈](https://github.com/ai520510xyf-del/cl-dev-tool/issues)
@@ -213,7 +213,7 @@ npm run test:coverage    # 测试覆盖率
 }
 ```
 
-更多问题请查看 [FAQ 文档](https://anker.github.io/anker-dev-tool/guide/faq)。
+更多问题请查看 [FAQ 文档](https://ai520510xyf-del.github.io/cl-dev-tool/guide/faq)。
 
 ## 👥 贡献者
 

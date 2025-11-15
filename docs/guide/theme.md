@@ -14,7 +14,7 @@ Anker Dev Tool 基于 Ant Design 5.x 构建，完全支持 Ant Design 的主题�
 
 ```ts
 import { ConfigProvider } from 'antd';
-import { ApprovalDetailButton } from 'anker-dev-tool';
+import { ApprovalDetailButton } from 'cl-dev-tool';
 
 const App = () => {
   return (

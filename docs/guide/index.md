@@ -20,13 +20,13 @@ toc: content
 
 ```bash
 # 使用 npm
-npm install anker-dev-tool
+npm install cl-dev-tool
 
 # 使用 yarn
-yarn add anker-dev-tool
+yarn add cl-dev-tool
 
 # 使用 pnpm
-pnpm add anker-dev-tool
+pnpm add cl-dev-tool
 ```
 
 ### 安装 peerDependencies
@@ -52,7 +52,7 @@ pnpm add antd axios
 
 ```ts
 import React from 'react';
-import { ApprovalDetailButton } from 'anker-dev-tool';
+import { ApprovalDetailButton } from 'cl-dev-tool';
 
 const App = () => {
   return (
@@ -73,7 +73,7 @@ Anker Dev Tool 默认支持基于 ES modules 的 tree shaking，直接引入即�
 
 ```ts
 // 只引入你需要的组件
-import { ApprovalDetailButton } from 'anker-dev-tool';
+import { ApprovalDetailButton } from 'cl-dev-tool';
 ```
 
 不需要额外配置，打包工具会自动移除未使用的代码。
@@ -89,7 +89,7 @@ import { ApprovalDetailButton } from 'anker-dev-tool';
 ```ts
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { ApprovalDetailButton } from 'anker-dev-tool';
+import { ApprovalDetailButton } from 'cl-dev-tool';
 import { ConfigProvider } from 'antd';
 import zhCN from 'antd/locale/zh_CN';
 
@@ -129,7 +129,7 @@ Anker Dev Tool 使用 TypeScript 编写，提供完整的类型定义，无需�
 ### 导入类型定义
 
 ```ts
-import type { ApprovalDetailButtonProps } from 'anker-dev-tool';
+import type { ApprovalDetailButtonProps } from 'cl-dev-tool';
 
 // 使用类型定义
 const buttonProps: ApprovalDetailButtonProps = {
@@ -145,7 +145,7 @@ const buttonProps: ApprovalDetailButtonProps = {
 TypeScript 会为你提供完整的智能提示和类型检查：
 
 ```ts
-import { ApprovalDetailButton } from 'anker-dev-tool';
+import { ApprovalDetailButton } from 'cl-dev-tool';
 
 <ApprovalDetailButton
   code="xxx"        // ✅ 必填，string 类型
@@ -166,7 +166,7 @@ import { ApprovalDetailButton } from 'anker-dev-tool';
 
 ```ts
 import { ConfigProvider, theme } from 'antd';
-import { ApprovalDetailButton } from 'anker-dev-tool';
+import { ApprovalDetailButton } from 'cl-dev-tool';
 import zhCN from 'antd/locale/zh_CN';
 
 const App = () => {
@@ -195,7 +195,7 @@ const App = () => {
 
 ```ts
 import { ConfigProvider, theme } from 'antd';
-import { ApprovalDetailButton } from 'anker-dev-tool';
+import { ApprovalDetailButton } from 'cl-dev-tool';
 
 const App = () => {
   return (

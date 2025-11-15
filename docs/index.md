@@ -40,13 +40,13 @@ features:
 
 ```bash
 # 使用 npm
-npm install anker-dev-tool
+npm install cl-dev-tool
 
 # 使用 yarn
-yarn add anker-dev-tool
+yarn add cl-dev-tool
 
 # 使用 pnpm
-pnpm add anker-dev-tool
+pnpm add cl-dev-tool
 ```
 
 ### 使用
@@ -54,7 +54,7 @@ pnpm add anker-dev-tool
 在你的项目中导入并使用组件：
 
 ```ts
-import { ApprovalDetailButton } from 'anker-dev-tool';
+import { ApprovalDetailButton } from 'cl-dev-tool';
 
 // 在你的组件中使用
 <ApprovalDetailButton

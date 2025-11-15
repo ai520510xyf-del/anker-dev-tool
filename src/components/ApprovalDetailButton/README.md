@@ -15,17 +15,17 @@
 ## 安装
 
 ```bash
-npm install anker-dev-tool
+npm install cl-dev-tool
 # 或
-yarn add anker-dev-tool
+yarn add cl-dev-tool
 # 或
-pnpm add anker-dev-tool
+pnpm add cl-dev-tool
 ```
 
 ## 基础用法
 
 ```tsx
-import { ApprovalDetailButton } from 'anker-dev-tool';
+import { ApprovalDetailButton } from 'cl-dev-tool';
 
 function App() {
   return (
@@ -56,7 +56,7 @@ function App() {
 ### 示例 1：基础用法
 
 ```tsx
-import { ApprovalDetailButton } from 'anker-dev-tool';
+import { ApprovalDetailButton } from 'cl-dev-tool';
 
 function MyComponent() {
   return (
@@ -72,7 +72,7 @@ function MyComponent() {
 ### 示例 2：自定义按钮文本和样式
 
 ```tsx
-import { ApprovalDetailButton } from 'anker-dev-tool';
+import { ApprovalDetailButton } from 'cl-dev-tool';
 
 function MyComponent() {
   return (
@@ -94,7 +94,7 @@ function MyComponent() {
 ### 示例 3：自定义 API 地址
 
 ```tsx
-import { ApprovalDetailButton } from 'anker-dev-tool';
+import { ApprovalDetailButton } from 'cl-dev-tool';
 
 function MyComponent() {
   return (
@@ -111,7 +111,7 @@ function MyComponent() {
 ### 示例 4：在列表中使用
 
 ```tsx
-import { ApprovalDetailButton } from 'anker-dev-tool';
+import { ApprovalDetailButton } from 'cl-dev-tool';
 import { Table } from 'antd';
 
 function ApprovalList({ list }) {
@@ -143,7 +143,7 @@ function ApprovalList({ list }) {
 ### 示例 5：错误处理
 
 ```tsx
-import { ApprovalDetailButton } from 'anker-dev-tool';
+import { ApprovalDetailButton } from 'cl-dev-tool';
 import { message } from 'antd';
 
 function MyComponent() {
@@ -165,7 +165,7 @@ function MyComponent() {
 ### 示例 6：关闭回调
 
 ```tsx
-import { ApprovalDetailButton } from 'anker-dev-tool';
+import { ApprovalDetailButton } from 'cl-dev-tool';
 
 function MyComponent() {
   const handleClose = () => {

@@ -19,13 +19,13 @@ npm install react react-dom antd axios
 ### 如何查看已安装的版本？
 
 ```bash
-npm list anker-dev-tool
+npm list cl-dev-tool
 ```
 
 ### 如何升级到最新版本？
 
 ```bash
-npm install anker-dev-tool@latest
+npm install cl-dev-tool@latest
 ```
 
 ## 🎨 样式相关
@@ -59,7 +59,7 @@ module.exports = {
 尝试在引入组件后再引入你的自定义样式：
 
 ```ts
-import { ApprovalDetailButton } from 'anker-dev-tool';
+import { ApprovalDetailButton } from 'cl-dev-tool';
 import './your-custom-styles.css'; // 放在组件引入之后
 ```
 
@@ -117,7 +117,7 @@ import { ConfigProvider, theme } from 'antd';
 所有组件的 Props 类型都可以直接导入：
 
 ```ts
-import type { ApprovalDetailButtonProps } from 'anker-dev-tool';
+import type { ApprovalDetailButtonProps } from 'cl-dev-tool';
 ```
 
 ### 编译时出现类型错误？
@@ -230,7 +230,7 @@ import 'regenerator-runtime/runtime';
 1. 使用 ES modules 导入（支持 tree-shaking）：
 
 ```ts
-import { ApprovalDetailButton } from 'anker-dev-tool';
+import { ApprovalDetailButton } from 'cl-dev-tool';
 ```
 
 2. 确保构建工具支持 tree-shaking（webpack 4+、Rollup、Vite 等）
