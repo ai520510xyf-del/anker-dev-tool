@@ -51,25 +51,7 @@ export interface TimelineData {
   cc: CCNode[];
 }
 
-// 数组格式的 timeline 项（API 可能返回的格式）
-export interface ArrayTimelineItem {
-  id: string;
-  name?: string;
-  nodeName?: string;
-  type?: string;
-  status?: string;
-  user?: string;
-  approverName?: string;
-  approver?: string;
-  dept?: string;
-  approverDept?: string;
-  time?: string;
-  timestamp?: string;
-  comment?: string;
-}
-
 export interface ProcessedApprovalData {
   header: ApprovalHeader;
-  // timeline 可能是数组格式（API 返回）或对象格式（处理后）
-  timeline: TimelineData | ArrayTimelineItem[];
+  timeline: TimelineData;
 }
