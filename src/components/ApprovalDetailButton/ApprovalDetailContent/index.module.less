@@ -5,6 +5,7 @@
   flex-direction: column;
   height: 100%;
   overflow: hidden;
+  background: #fff;
 }
 
 .closeBtn {
@@ -36,7 +37,7 @@
 
 .header {
   margin-bottom: 24px;
-  padding-bottom: 16px;
+  padding: 24px 24px 16px;
   border-bottom: 2px solid #e8e8e8;
   flex-shrink: 0;
 }
@@ -140,13 +141,291 @@
 .container {
   flex: 1;
   overflow-y: auto;
-  background: var(--bg-page);
+  background: #fff;
   padding: 24px;
+}
+
+// 统一时间线
+.unifiedTimeline {
+  position: relative;
+  padding-left: 40px;
+}
+
+// 时间线垂直连接线
+.unifiedTimeline::before {
+  content: '';
+  position: absolute;
+  left: 12px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: #e8e8e8;
+}
+
+.emptyState {
+  padding: 40px 20px;
+  text-align: center;
+  color: #8c8c8c;
+  font-size: 14px;
+}
+
+.timelineNode {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.timelineNode:last-child {
+  margin-bottom: 0;
+}
+
+// 节点指示器圆点
+.nodeDot {
+  position: absolute;
+  left: -34px;
+  top: 6px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 2px #d9d9d9;
+  background: #fff;
+  z-index: 2;
+}
+
+// 不同状态的圆点颜色
+.nodeDot.completed {
+  background: #52c41a;
+  box-shadow: 0 0 0 2px #52c41a;
+}
+
+.nodeDot.pending {
+  background: #1890ff;
+  box-shadow: 0 0 0 2px #1890ff;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.nodeDot.cc {
+  background: #faad14;
+  box-shadow: 0 0 0 2px #faad14;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 2px #1890ff;
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(24, 144, 255, 0.2);
+  }
+}
+
+// 节点内容卡片
+.nodeContent {
+  background: #fafafa;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  padding: 18px 20px;
+}
+
+.nodeContent.completed {
+  border-left: 3px solid #52c41a;
+}
+
+.nodeContent.pending {
+  border-left: 3px solid #1890ff;
+  background: #e6f7ff;
+}
+
+.nodeContent.cc {
+  border-left: 3px solid #faad14;
+  background: #fffbe6;
+}
+
+.nodeHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.nodeTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 500;
+  color: #262626;
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+.nodeBadge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: normal;
+}
+
+.nodeBadge.approved {
+  background: #f6ffed;
+  color: #52c41a;
+  border: 1px solid #b7eb8f;
+}
+
+.nodeBadge.pending {
+  background: #e6f7ff;
+  color: #1890ff;
+  border: 1px solid #91d5ff;
+}
+
+.nodeBadge.rejected {
+  background: #fff1f0;
+  color: #ff4d4f;
+  border: 1px solid #ffccc7;
+}
+
+.nodeBadge.cc {
+  background: #fffbe6;
+  color: #faad14;
+  border: 1px solid #ffe58f;
+}
+
+.nodeTime {
+  font-size: 13px;
+  color: #8c8c8c;
+  white-space: nowrap;
+}
+
+.nodeInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+  color: #595959;
+}
+
+.nodeInfoRow {
+  display: flex;
+  gap: 8px;
+}
+
+.nodeInfoLabel {
+  color: #8c8c8c;
+  min-width: 60px;
+}
+
+.nodeComment {
+  margin-top: 12px;
+  padding: 10px 14px;
+  background: #fff;
+  border-radius: 6px;
+  border: 1px solid #d9d9d9;
+  font-size: 13px;
+  color: #595959;
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+.nodeComment::before {
+  content: '💬 ';
+}
+
+.timeCloseHint {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  background: #fff7e6;
+  border: 1px solid #ffd591;
+  border-radius: 4px;
+  font-size: 12px;
+  color: #fa8c16;
+  margin-left: 8px;
+}
+
+.dividerLine {
+  position: relative;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 16px 0;
+}
+
+.dividerText {
+  background: white;
+  padding: 0 16px;
+  font-size: 13px;
+  color: #8c8c8c;
+  z-index: 1;
+  position: relative;
+}
+
+.dividerLine::before {
+  content: '';
+  position: absolute;
+  left: -34px;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(to right, transparent, #e8e8e8 40px, #e8e8e8);
+  z-index: 0;
+}
+
+.footerNote {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #e8e8e8;
+  font-size: 12px;
+  color: #8c8c8c;
+  line-height: 1.8;
+}
+
+.loadingContainer {
+  padding: 48px;
+  text-align: center;
+}
+
+.errorContainer {
+  padding: 48px;
+  text-align: center;
 }
 
 @media (max-width: 768px) {
   .headerInfo {
     flex-direction: column;
     gap: 12px;
+  }
+
+  .nodeHeader {
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+  }
+
+  .nodeTitle {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .nodeTime {
+    margin-left: 0;
+  }
+
+  .timeCloseHint {
+    margin-left: 0;
+  }
+
+  .nodeDot {
+    left: -28px;
+  }
+
+  .unifiedTimeline {
+    padding-left: 32px;
+  }
+
+  .unifiedTimeline::before {
+    left: 8px;
   }
 }

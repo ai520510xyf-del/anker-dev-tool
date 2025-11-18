@@ -18,6 +18,7 @@ interface UnifiedTimelineNode {
   approverName: string;
   approverDept?: string;
   time: string;
+  ccTime?: string; // CC 节点的时间字段
   status: 'approved' | 'rejected' | 'pending' | 'cc';
   comment?: string;
   isTimeClose?: boolean;
@@ -39,18 +40,11 @@ const ApprovalTimeline: React.FC<ApprovalTimelineProps> = ({ timeline }) => {
     const ccNodes = timeline.cc || [];
     const pendingNodes = timeline.pending || [];
 
-    // 合并已完成节点和抄送节点
+    // 合并已完成节点和抄送节点（完全对齐参考项目的实现）
     const allCompletedNodes: UnifiedTimelineNode[] = [
       ...completedNodes.map((node: ProcessedNode) => ({
-        id: node.id,
-        nodeName: node.nodeName,
+        ...node,
         nodeType: 'completed' as const,
-        approverName: node.approverName,
-        approverDept: node.approverDept,
-        time: node.time,
-        status: node.status,
-        comment: node.comment,
-        isTimeClose: node.isTimeClose,
       })),
       ...ccNodes.map((node: CCNode) => ({
         id: node.id,
@@ -58,17 +52,18 @@ const ApprovalTimeline: React.FC<ApprovalTimelineProps> = ({ timeline }) => {
         nodeType: 'cc' as const,
         approverName: node.ccPersonName,
         approverDept: node.ccPersonDept,
-        time: node.ccTime || '',
+        time: '',
+        ccTime: node.ccTime || '',
         status: 'cc' as const,
         comment: undefined,
         isTimeClose: false,
       })),
     ];
 
-    // 按时间排序（最早的在前面）
+    // 按时间排序（最早的在前面）- 对齐参考项目的排序逻辑
     allCompletedNodes.sort((a, b) => {
-      const timeA = a.time ? new Date(a.time).getTime() : 0;
-      const timeB = b.time ? new Date(b.time).getTime() : 0;
+      const timeA = new Date(a.time || a.ccTime || '').getTime();
+      const timeB = new Date(b.time || b.ccTime || '').getTime();
       return timeA - timeB;
     });
 

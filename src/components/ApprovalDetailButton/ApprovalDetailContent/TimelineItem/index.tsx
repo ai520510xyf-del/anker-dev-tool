@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
-import StatusBadge from '../../common/StatusBadge';
 import styles from './index.module.less';
 
 /**
@@ -13,6 +12,7 @@ interface UnifiedTimelineNode {
   approverName: string;
   approverDept?: string;
   time: string;
+  ccTime?: string; // CC 节点的时间字段
   status: 'approved' | 'rejected' | 'pending' | 'cc';
   comment?: string;
   isTimeClose?: boolean;
@@ -51,12 +51,13 @@ const TimelineItem: React.FC<TimelineItemProps> = ({
 
   // 显示时间（完全对齐参考项目的逻辑）
   const displayTime = useMemo(() => {
-    const time = node.time;
+    // 对齐参考项目：支持 time 和 ccTime 字段
+    const time = node.time || node.ccTime;
     if (time === 'PENDING') {
       return '待处理';
     }
     return time || (node.nodeType === 'pending' ? '等待中...' : '');
-  }, [node.time, node.nodeType]);
+  }, [node.time, node.ccTime, node.nodeType]);
 
   // 使用 nodeType prop 或 node.nodeType
   const actualNodeType = nodeType || node.nodeType;

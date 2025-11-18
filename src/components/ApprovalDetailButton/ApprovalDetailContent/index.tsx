@@ -5,7 +5,12 @@ import { useAutoRefresh } from '../hooks/useAutoRefresh';
 import { isTerminalStatus } from '../utils';
 import Skeleton from '../common/Skeleton';
 import ErrorState from '../common/ErrorState';
-import ApprovalTimeline from './ApprovalTimeline';
+import type {
+  TimelineData,
+  ProcessedNode,
+  CCNode,
+  ArrayTimelineItem,
+} from '../types/approval.types';
 import styles from './index.module.less';
 
 /**
@@ -25,6 +30,23 @@ export interface ApprovalDetailContentProps {
   onClose?: () => void;
 }
 
+// 统一的时间线节点类型（用于渲染）
+interface UnifiedTimelineNode {
+  id: string;
+  nodeName: string;
+  nodeType: 'completed' | 'pending' | 'cc';
+  approverName: string;
+  approverDept?: string;
+  time: string;
+  ccTime?: string;
+  status: 'approved' | 'rejected' | 'pending' | 'cc';
+  comment?: string;
+  isTimeClose?: boolean;
+  // CC 节点特有字段
+  ccNodeName?: string;
+  ccPersonName?: string;
+}
+
 const ApprovalDetailContent: React.FC<ApprovalDetailContentProps> = ({
   code,
   systemCode,
@@ -40,18 +62,113 @@ const ApprovalDetailContent: React.FC<ApprovalDetailContentProps> = ({
 
   const [isRefreshing, setIsRefreshing] = useState(false);
 
+  // 规范化 timeline 数据：兼容数组和对象两种格式
+  const normalizedTimeline = useMemo<TimelineData>(() => {
+    if (!data?.timeline) {
+      return { completed: [], pending: [], cc: [] };
+    }
+
+    // 如果是数组格式，需要转换为对象格式
+    if (Array.isArray(data.timeline)) {
+      const completed: ProcessedNode[] = [];
+      const pending: ProcessedNode[] = [];
+      const cc: CCNode[] = [];
+
+      data.timeline.forEach((item: ArrayTimelineItem) => {
+        const nodeName = item.name || item.nodeName || '未知节点';
+        const approverName =
+          item.user || item.approverName || item.approver || '未知';
+        const time = item.time || item.timestamp || '';
+
+        // 根据 status 和 type 字段分类
+        if (item.status === 'approved' || item.status === 'rejected') {
+          completed.push({
+            id: item.id,
+            nodeName: nodeName,
+            approverName: approverName,
+            approverDept: item.dept || item.approverDept,
+            time: time,
+            status: item.status === 'approved' ? 'approved' : 'rejected',
+            comment: item.comment,
+            nodeType: item.type === 'cc' ? 'CC' : 'APPROVAL',
+          });
+        } else if (item.status === 'pending') {
+          pending.push({
+            id: item.id,
+            nodeName: nodeName,
+            approverName: approverName,
+            approverDept: item.dept || item.approverDept,
+            time: time || 'PENDING',
+            status: 'pending',
+            comment: item.comment,
+            nodeType: 'APPROVAL',
+          });
+        } else if (
+          item.status === 'completed' ||
+          (!item.status && item.type === 'submit')
+        ) {
+          completed.push({
+            id: item.id,
+            nodeName: nodeName,
+            approverName: approverName,
+            approverDept: item.dept || item.approverDept,
+            time: time,
+            status: 'approved',
+            comment: item.comment,
+            nodeType: 'APPROVAL',
+          });
+        } else if (item.type === 'approve' || item.type === 'final') {
+          pending.push({
+            id: item.id,
+            nodeName: nodeName,
+            approverName: approverName,
+            approverDept: item.dept || item.approverDept,
+            time: time || 'PENDING',
+            status: 'pending',
+            comment: item.comment,
+            nodeType: 'APPROVAL',
+          });
+        } else if (item.type === 'cc') {
+          cc.push({
+            id: item.id,
+            ccPersonName: approverName,
+            ccPersonDept: item.dept,
+            ccTime: time,
+          });
+        } else {
+          completed.push({
+            id: item.id,
+            nodeName: nodeName,
+            approverName: approverName,
+            approverDept: item.dept || item.approverDept,
+            time: time,
+            status: 'approved',
+            comment: item.comment,
+            nodeType: 'APPROVAL',
+          });
+        }
+      });
+
+      return { completed, pending, cc };
+    }
+
+    // 如果已经是对象格式，直接返回
+    return {
+      completed: data.timeline.completed || [],
+      pending: data.timeline.pending || [],
+      cc: data.timeline.cc || [],
+    };
+  }, [data]);
+
   // 判断是否应该自动刷新
   const shouldAutoRefresh = useMemo(() => {
     if (!data) return false;
 
-    // 同时满足两个条件时停止:
-    // 1. 审批状态为终态
     const isTerminalState = isTerminalStatus(data.header.status);
-    // 2. 无待审批节点
-    const noPendingNodes = data.timeline.pending.length === 0;
+    const noPendingNodes = normalizedTimeline.pending.length === 0;
 
     return !(isTerminalState && noPendingNodes);
-  }, [data]);
+  }, [data, normalizedTimeline]);
 
   // 合并标题:审批详情 - 【审批流程名称】
   const pageTitle = useMemo(
@@ -77,6 +194,112 @@ const ApprovalDetailContent: React.FC<ApprovalDetailContentProps> = ({
     }
   }, [error, onError]);
 
+  // 获取状态徽章类名
+  const getStatusBadgeClass = (status: string) => {
+    switch (status) {
+      case 'APPROVED':
+        return styles.approved;
+      case 'REJECTED':
+        return styles.rejected;
+      case 'PENDING':
+      default:
+        return styles.pending;
+    }
+  };
+
+  // 获取状态文本
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case 'APPROVED':
+        return '✓ 审批通过';
+      case 'REJECTED':
+        return '✗ 审批拒绝';
+      case 'CANCELED':
+        return '⊘ 已撤销';
+      case 'PENDING':
+      default:
+        return '⏳ 审批进行中';
+    }
+  };
+
+  // 获取节点徽章类名
+  const getNodeBadgeClass = (status: string, nodeType: string) => {
+    if (nodeType === 'cc') return `${styles.nodeBadge} ${styles.cc}`;
+    if (status === 'approved') return `${styles.nodeBadge} ${styles.approved}`;
+    if (status === 'rejected') return `${styles.nodeBadge} ${styles.rejected}`;
+    return `${styles.nodeBadge} ${styles.pending}`;
+  };
+
+  // 获取节点徽章文本
+  const getNodeBadgeText = (status: string, nodeType: string) => {
+    if (nodeType === 'cc') return '📧 已抄送';
+    if (status === 'approved') return '✓ 已通过';
+    if (status === 'rejected') return '✗ 已拒绝';
+    return '⏳ 待处理';
+  };
+
+  // 渲染时间线节点
+  const renderTimelineNode = (
+    node: UnifiedTimelineNode,
+    type: 'completed' | 'pending' | 'cc'
+  ) => {
+    const displayTime = (() => {
+      const time = node.time || node.ccTime;
+      if (time === 'PENDING') {
+        return '待处理';
+      }
+      return time || (type === 'pending' ? '等待中...' : '');
+    })();
+
+    const displayNodeName =
+      type === 'cc'
+        ? node.ccNodeName || node.nodeName || '抄送'
+        : node.nodeName || '未知节点';
+
+    const displayPersonName = node.approverName || node.ccPersonName || '未知';
+
+    return (
+      <div key={`${type}-${node.id}`} className={styles.timelineNode}>
+        <div className={`${styles.nodeDot} ${styles[type]}`}></div>
+        <div className={`${styles.nodeContent} ${styles[type]}`}>
+          <div className={styles.nodeHeader}>
+            <div className={styles.nodeTitle}>
+              <span>{displayNodeName}</span>
+              <span className={getNodeBadgeClass(node.status, type)}>
+                {getNodeBadgeText(node.status, type)}
+              </span>
+              {node.isTimeClose && (
+                <span className={styles.timeCloseHint}>⚡ 几乎同时</span>
+              )}
+            </div>
+            <div className={styles.nodeTime}>{displayTime}</div>
+          </div>
+          <div className={styles.nodeInfo}>
+            <div className={styles.nodeInfoRow}>
+              <span className={styles.nodeInfoLabel}>
+                {type === 'cc' ? '抄送人:' : '审批人:'}
+              </span>
+              <span>
+                {displayPersonName}
+                {node.approverDept && ` (${node.approverDept})`}
+              </span>
+            </div>
+          </div>
+          {node.comment && (
+            <div className={styles.nodeComment}>{node.comment}</div>
+          )}
+        </div>
+      </div>
+    );
+  };
+
+  // 渲染分隔线
+  const renderDivider = () => (
+    <div className={styles.dividerLine}>
+      <span className={styles.dividerText}>以下为待审批节点</span>
+    </div>
+  );
+
   if (loading) {
     return (
       <div className={styles.wrapper}>
@@ -89,7 +312,7 @@ const ApprovalDetailContent: React.FC<ApprovalDetailContentProps> = ({
             ✕
           </button>
         )}
-        <div className={styles.container}>
+        <div className={styles.loadingContainer}>
           <Skeleton />
         </div>
       </div>
@@ -108,7 +331,7 @@ const ApprovalDetailContent: React.FC<ApprovalDetailContentProps> = ({
             ✕
           </button>
         )}
-        <div className={styles.container}>
+        <div className={styles.errorContainer}>
           <ErrorState message={error.message} onRetry={refetch} />
         </div>
       </div>
@@ -117,32 +340,60 @@ const ApprovalDetailContent: React.FC<ApprovalDetailContentProps> = ({
 
   if (!data) return null;
 
-  // 获取状态徽章类名和文本
-  const getStatusBadgeClass = (status: string) => {
-    switch (status) {
-      case 'APPROVED':
-        return styles.approved;
-      case 'REJECTED':
-        return styles.rejected;
-      case 'PENDING':
-      default:
-        return styles.pending;
-    }
-  };
+  const completedNodes = normalizedTimeline.completed || [];
+  const ccNodes = normalizedTimeline.cc || [];
+  const pendingNodes = normalizedTimeline.pending || [];
 
-  const getStatusText = (status: string) => {
-    switch (status) {
-      case 'APPROVED':
-        return '✓ 审批通过';
-      case 'REJECTED':
-        return '✗ 审批拒绝';
-      case 'CANCELED':
-        return '⊘ 已撤销';
-      case 'PENDING':
-      default:
-        return '⏳ 审批进行中';
-    }
-  };
+  // 合并已完成节点和抄送节点，并按时间排序
+  const allCompletedNodes: UnifiedTimelineNode[] = [
+    ...completedNodes.map((node: ProcessedNode) => ({
+      id: node.id,
+      nodeName: node.nodeName,
+      nodeType: 'completed' as const,
+      approverName: node.approverName,
+      approverDept: node.approverDept,
+      time: node.time,
+      status: node.status,
+      comment: node.comment,
+      isTimeClose: node.isTimeClose,
+    })),
+    ...ccNodes.map((node: CCNode) => ({
+      id: node.id,
+      nodeName: node.ccNodeName || '抄送',
+      nodeType: 'cc' as const,
+      approverName: node.ccPersonName,
+      approverDept: node.ccPersonDept,
+      time: '',
+      ccTime: node.ccTime || '',
+      status: 'cc' as const,
+      comment: undefined,
+      isTimeClose: false,
+      ccNodeName: node.ccNodeName,
+      ccPersonName: node.ccPersonName,
+    })),
+  ];
+
+  // 按时间排序（最早的在前面）
+  allCompletedNodes.sort((a, b) => {
+    const timeA = new Date(a.time || a.ccTime || '').getTime();
+    const timeB = new Date(b.time || b.ccTime || '').getTime();
+    return timeA - timeB;
+  });
+
+  // 待审批节点
+  const allPendingNodes: UnifiedTimelineNode[] = pendingNodes.map(
+    (node: ProcessedNode) => ({
+      id: node.id,
+      nodeName: node.nodeName,
+      nodeType: 'pending' as const,
+      approverName: node.approverName,
+      approverDept: node.approverDept,
+      time: node.time,
+      status: node.status,
+      comment: node.comment,
+      isTimeClose: node.isTimeClose,
+    })
+  );
 
   return (
     <div className={styles.wrapper}>
@@ -194,8 +445,37 @@ const ApprovalDetailContent: React.FC<ApprovalDetailContentProps> = ({
           </div>
         </div>
       </div>
+
+      {/* 统一时间线 */}
       <div className={styles.container}>
-        <ApprovalTimeline timeline={data.timeline} />
+        <div className={styles.unifiedTimeline}>
+          {allCompletedNodes.length === 0 &&
+          ccNodes.length === 0 &&
+          allPendingNodes.length === 0 ? (
+            <div className={styles.emptyState}>暂无审批节点数据</div>
+          ) : (
+            <>
+              {/* 已完成和抄送节点 */}
+              {allCompletedNodes.map(node =>
+                renderTimelineNode(node, node.nodeType)
+              )}
+
+              {/* 分隔线（如果有待审批节点） */}
+              {allPendingNodes.length > 0 &&
+                allCompletedNodes.length > 0 &&
+                renderDivider()}
+
+              {/* 待审批节点 */}
+              {allPendingNodes.map(node => renderTimelineNode(node, 'pending'))}
+            </>
+          )}
+        </div>
+
+        {/* 底部说明 */}
+        <div className={styles.footerNote}>
+          * 审批节点按时间顺序排列
+          <br />* 时间接近的节点可能为并行审批或快速连续审批
+        </div>
       </div>
     </div>
   );
