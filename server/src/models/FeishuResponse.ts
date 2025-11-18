@@ -62,6 +62,16 @@ export interface TimelineNode {
   open_id_list?: string[];
 }
 
+export interface ApprovalTask {
+  id: string;
+  user_id?: string;
+  open_id?: string;
+  title?: string;
+  node_id?: string;
+  node_name?: string;
+  status?: 'PENDING' | 'APPROVED' | 'REJECTED' | 'TRANSFERRED' | 'DONE';
+}
+
 export interface FeishuApprovalData {
   instance_id: string;
   instance_code: string;
@@ -74,6 +84,7 @@ export interface FeishuApprovalData {
   user_id: string;
   open_id: string;
   timeline: TimelineNode[];
+  task_list?: ApprovalTask[];
   form?: Record<string, any>;
 }
 

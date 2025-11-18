@@ -1,8 +1,22 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
-import type { ProcessedNode } from '../../types/approval.types';
 import StatusBadge from '../../common/StatusBadge';
 import styles from './index.module.less';
+
+/**
+ * 统一的时间线节点数据
+ */
+interface UnifiedTimelineNode {
+  id: string;
+  nodeName: string;
+  nodeType: 'completed' | 'pending' | 'cc';
+  approverName: string;
+  approverDept?: string;
+  time: string;
+  status: 'approved' | 'rejected' | 'pending' | 'cc';
+  comment?: string;
+  isTimeClose?: boolean;
+}
 
 /**
  * TimelineItem 组件
@@ -10,53 +24,79 @@ import styles from './index.module.less';
  */
 export interface TimelineItemProps {
   /** 节点数据 */
-  node: ProcessedNode;
-  /** 是否已完成（用于显示连接线） */
-  isCompleted: boolean;
+  node: UnifiedTimelineNode;
+  /** 是否是最后一个节点（用于隐藏连接线） */
+  isLast: boolean;
+  /** 节点类型 */
+  nodeType: 'completed' | 'pending' | 'cc';
 }
 
-const TimelineItem: React.FC<TimelineItemProps> = ({ node, isCompleted }) => {
-  const itemClassName = useMemo(
-    () =>
-      [styles.container, node.isTimeClose ? styles.timeClose : '']
-        .filter(Boolean)
-        .join(' '),
-    [node.isTimeClose]
-  );
+const TimelineItem: React.FC<TimelineItemProps> = ({
+  node,
+  isLast,
+  nodeType,
+}) => {
+  // 获取状态徽章信息
+  const badgeInfo = useMemo(() => {
+    if (node.status === 'cc') {
+      return { emoji: '📧', text: '已抄送', className: 'cc' };
+    } else if (node.status === 'approved') {
+      return { emoji: '✓', text: '已通过', className: 'approved' };
+    } else if (node.status === 'rejected') {
+      return { emoji: '✗', text: '已拒绝', className: 'rejected' };
+    } else {
+      return { emoji: '⏳', text: '待处理', className: 'pending' };
+    }
+  }, [node.status]);
+
+  // 显示时间（完全对齐参考项目的逻辑）
+  const displayTime = useMemo(() => {
+    const time = node.time;
+    if (time === 'PENDING') {
+      return '待处理';
+    }
+    return time || (node.nodeType === 'pending' ? '等待中...' : '');
+  }, [node.time, node.nodeType]);
+
+  // 使用 nodeType prop 或 node.nodeType
+  const actualNodeType = nodeType || node.nodeType;
 
   return (
-    <div className={itemClassName}>
-      <div className={styles.indicator}>
-        <div className={`${styles.dot} ${styles[node.status]}`}></div>
-        {isCompleted && <div className={styles.line}></div>}
-      </div>
+    <div className={`${styles.timelineNode} ${isLast ? styles.lastNode : ''}`}>
+      {/* 节点指示器 */}
+      <div className={`${styles.nodeDot} ${styles[actualNodeType]}`}></div>
 
-      <div className={styles.content}>
-        <div className={styles.header}>
-          <span className={styles.nodeName}>{node.nodeName}</span>
-          <StatusBadge status={node.status} />
+      {/* 节点内容 */}
+      <div className={`${styles.nodeContent} ${styles[actualNodeType]}`}>
+        <div className={styles.nodeHeader}>
+          <div className={styles.nodeTitle}>
+            <span>{node.nodeName}</span>
+            <span
+              className={`${styles.nodeBadge} ${styles[badgeInfo.className]}`}
+            >
+              {badgeInfo.emoji} {badgeInfo.text}
+            </span>
+            {node.isTimeClose && (
+              <span className={styles.timeCloseHint}>⚡ 几乎同时</span>
+            )}
+          </div>
+          {displayTime && <div className={styles.nodeTime}>{displayTime}</div>}
         </div>
 
-        <div className={styles.info}>
-          <div className={styles.infoRow}>
-            <span className={styles.label}>审批人:</span>
-            <span className={styles.value}>
+        <div className={styles.nodeInfo}>
+          <div className={styles.nodeInfoRow}>
+            <span className={styles.nodeInfoLabel}>
+              {node.status === 'cc' ? '抄送人:' : '审批人:'}
+            </span>
+            <span>
               {node.approverName}
               {node.approverDept && ` (${node.approverDept})`}
             </span>
           </div>
-          <div className={styles.time}>{node.time}</div>
         </div>
 
         {node.comment && (
-          <div className={styles.comment}>
-            <span className={styles.commentLabel}>审批意见:</span>
-            <span className={styles.commentText}>{node.comment}</span>
-          </div>
-        )}
-
-        {node.isTimeClose && node.timeCloseNote && (
-          <div className={styles.timeCloseNote}>⚠️ {node.timeCloseNote}</div>
+          <div className={styles.nodeComment}>{node.comment}</div>
         )}
       </div>
     </div>
@@ -68,17 +108,17 @@ TimelineItem.propTypes = {
   node: PropTypes.shape({
     id: PropTypes.string.isRequired,
     nodeName: PropTypes.string.isRequired,
-    nodeType: PropTypes.oneOf(['START', 'APPROVAL', 'CC', 'END']).isRequired,
+    nodeType: PropTypes.oneOf(['completed', 'pending', 'cc']).isRequired,
     approverName: PropTypes.string.isRequired,
     approverDept: PropTypes.string,
     time: PropTypes.string.isRequired,
-    status: PropTypes.oneOf(['approved', 'rejected', 'pending']).isRequired,
+    status: PropTypes.oneOf(['approved', 'rejected', 'pending', 'cc'])
+      .isRequired,
     comment: PropTypes.string,
     isTimeClose: PropTypes.bool,
-    timeDiffSeconds: PropTypes.number,
-    timeCloseNote: PropTypes.string,
-  }).isRequired as PropTypes.Validator<ProcessedNode>,
-  isCompleted: PropTypes.bool.isRequired,
+  }).isRequired as PropTypes.Validator<UnifiedTimelineNode>,
+  isLast: PropTypes.bool.isRequired,
+  nodeType: PropTypes.oneOf(['completed', 'pending', 'cc']).isRequired,
 };
 
 export default TimelineItem;

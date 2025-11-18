@@ -8,6 +8,7 @@ import { config } from './config';
 import { logger } from './utils/logger';
 import { getRedisClient, closeRedisClient } from './config/redis.config';
 import approvalRoutes from './routes/approval.routes';
+import lookupRoutes from './routes/lookup.routes';
 import { errorHandler, notFoundHandler } from './middleware/error.middleware';
 
 const app: Express = express();
@@ -36,6 +37,7 @@ app.get('/', (req, res) => {
     endpoints: {
       health: 'GET /health',
       approval: 'GET /api/approval/:instanceId',
+      lookup: 'GET /api/lookup/instance/:serialNumber',
     },
     documentation: {
       frontend: 'https://ai520510xyf-del.github.io/cl-dev-tool',
@@ -59,6 +61,7 @@ app.get('/health', (req, res) => {
 
 // API routes
 app.use('/api/approval', approvalRoutes);
+app.use('/api/lookup', lookupRoutes);
 
 // 404 handler
 app.use(notFoundHandler);

@@ -16,21 +16,29 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
   const statusConfig = {
     approved: {
       text: '已通过',
+      icon: '✓',
       className: styles.badgeApproved,
     },
     rejected: {
       text: '已拒绝',
+      icon: '✗',
       className: styles.badgeRejected,
     },
     pending: {
-      text: '待处理',
+      text: '审批进行中',
+      icon: '⏳',
       className: styles.badgePending,
     },
   };
 
   const config = statusConfig[status];
 
-  return <span className={config.className}>{config.text}</span>;
+  return (
+    <span className={config.className}>
+      <span className={styles.icon}>{config.icon}</span>
+      {config.text}
+    </span>
+  );
 };
 
 // Props 校验：PropTypes + TypeScript 类型

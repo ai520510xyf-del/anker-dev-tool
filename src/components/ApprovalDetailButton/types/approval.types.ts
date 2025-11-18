@@ -39,6 +39,7 @@ export interface ProcessedNode {
 
 export interface CCNode {
   id: string;
+  ccNodeName?: string; // 抄送节点名称，用于显示特定的抄送目标描述
   ccPersonName: string;
   ccPersonDept?: string;
   ccTime?: string;

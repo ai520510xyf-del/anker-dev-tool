@@ -1,13 +1,11 @@
-import React, { useMemo, useCallback, useEffect } from 'react';
+import React, { useMemo, useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useApprovalData } from '../hooks/useApprovalData';
 import { useAutoRefresh } from '../hooks/useAutoRefresh';
 import { isTerminalStatus } from '../utils';
 import Skeleton from '../common/Skeleton';
 import ErrorState from '../common/ErrorState';
-import ApprovalHeader from './ApprovalHeader';
 import ApprovalTimeline from './ApprovalTimeline';
-import DrawerHeader from './DrawerHeader';
 import styles from './index.module.less';
 
 /**
@@ -40,6 +38,8 @@ const ApprovalDetailContent: React.FC<ApprovalDetailContentProps> = ({
     systemKey
   );
 
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
   // 判断是否应该自动刷新
   const shouldAutoRefresh = useMemo(() => {
     if (!data) return false;
@@ -60,7 +60,12 @@ const ApprovalDetailContent: React.FC<ApprovalDetailContentProps> = ({
   );
 
   const handleRefetch = useCallback(async () => {
-    await refetch();
+    setIsRefreshing(true);
+    try {
+      await refetch();
+    } finally {
+      setIsRefreshing(false);
+    }
   }, [refetch]);
 
   useAutoRefresh(shouldAutoRefresh, handleRefetch);
@@ -74,36 +79,125 @@ const ApprovalDetailContent: React.FC<ApprovalDetailContentProps> = ({
 
   if (loading) {
     return (
-      <>
-        <DrawerHeader title="审批详情" onClose={onClose} />
+      <div className={styles.wrapper}>
+        {onClose && (
+          <button
+            className={styles.closeBtn}
+            onClick={onClose}
+            aria-label="关闭"
+          >
+            ✕
+          </button>
+        )}
         <div className={styles.container}>
           <Skeleton />
         </div>
-      </>
+      </div>
     );
   }
 
   if (error) {
     return (
-      <>
-        <DrawerHeader title="审批详情" onClose={onClose} />
+      <div className={styles.wrapper}>
+        {onClose && (
+          <button
+            className={styles.closeBtn}
+            onClick={onClose}
+            aria-label="关闭"
+          >
+            ✕
+          </button>
+        )}
         <div className={styles.container}>
           <ErrorState message={error.message} onRetry={refetch} />
         </div>
-      </>
+      </div>
     );
   }
 
   if (!data) return null;
 
+  // 获取状态徽章类名和文本
+  const getStatusBadgeClass = (status: string) => {
+    switch (status) {
+      case 'APPROVED':
+        return styles.approved;
+      case 'REJECTED':
+        return styles.rejected;
+      case 'PENDING':
+      default:
+        return styles.pending;
+    }
+  };
+
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case 'APPROVED':
+        return '✓ 审批通过';
+      case 'REJECTED':
+        return '✗ 审批拒绝';
+      case 'CANCELED':
+        return '⊘ 已撤销';
+      case 'PENDING':
+      default:
+        return '⏳ 审批进行中';
+    }
+  };
+
   return (
-    <>
-      <DrawerHeader title={pageTitle} onClose={onClose} />
+    <div className={styles.wrapper}>
+      {onClose && (
+        <button className={styles.closeBtn} onClick={onClose} aria-label="关闭">
+          ✕
+        </button>
+      )}
+      <div className={styles.header}>
+        <div className={styles.headerTop}>
+          <h1 className={styles.title}>{pageTitle}</h1>
+          <button
+            className={styles.refreshButton}
+            onClick={handleRefetch}
+            disabled={isRefreshing}
+            title="刷新数据"
+          >
+            {isRefreshing ? '🔄' : '↻'}
+          </button>
+        </div>
+        <div className={styles.headerInfo}>
+          {(data.header.serialNumber || data.header.instanceId) && (
+            <div className={styles.headerInfoItem}>
+              <span className={styles.headerInfoLabel}>审批单号:</span>
+              <span className={styles.headerInfoValue}>
+                {data.header.serialNumber || data.header.instanceId}
+              </span>
+            </div>
+          )}
+          <div className={styles.headerInfoItem}>
+            <span className={styles.headerInfoLabel}>申请人:</span>
+            <span className={styles.headerInfoValue}>
+              {data.header.applicant}
+            </span>
+          </div>
+          <div className={styles.headerInfoItem}>
+            <span className={styles.headerInfoLabel}>申请时间:</span>
+            <span className={styles.headerInfoValue}>
+              {data.header.applyTime}
+            </span>
+          </div>
+          <div className={styles.headerInfoItem}>
+            <span className={styles.headerInfoLabel}>状态:</span>
+            <span
+              className={`${styles.headerStatusBadge} ${getStatusBadgeClass(data.header.status)}`}
+            >
+              {getStatusText(data.header.status)}
+            </span>
+          </div>
+        </div>
+      </div>
       <div className={styles.container}>
-        <ApprovalHeader header={data.header} />
         <ApprovalTimeline timeline={data.timeline} />
       </div>
-    </>
+    </div>
   );
 };
 

@@ -69,6 +69,40 @@ export async function getApprovalInstance(
       }
 
       logger.info(`Successfully fetched approval instance: ${instanceId}`);
+
+      // 🔍 DEBUG: Log raw Feishu API response
+      logger.debug('🔍 RAW FEISHU API RESPONSE:', {
+        instanceId: instanceId,
+        code: response.data.code,
+        status: response.data.data?.status,
+        timeline_count: response.data.data?.timeline?.length || 0,
+        task_list_count: response.data.data?.task_list?.length || 0,
+        timeline_nodes: response.data.data?.timeline?.map(
+          (node: any, idx: number) => ({
+            index: idx,
+            type: node.type,
+            status: node.status,
+            node_name: node.node_name,
+            node_key: node.node_key,
+            user_id: node.user_id,
+            open_id: node.open_id,
+            cc_user_list: node.cc_user_list,
+            // Log all available fields for CC nodes
+            ...(node.type === 'CC' ? { raw_cc_node: node } : {}),
+          })
+        ),
+        task_list: response.data.data?.task_list?.map(
+          (task: any, idx: number) => ({
+            index: idx,
+            id: task.id,
+            status: task.status,
+            node_name: task.node_name,
+            user_id: task.user_id,
+            open_id: task.open_id,
+          })
+        ),
+      });
+
       return response.data;
     } catch (error) {
       attempt++;

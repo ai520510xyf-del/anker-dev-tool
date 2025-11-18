@@ -55,8 +55,11 @@ export class ApprovalController {
       logger.debug(`Cache miss: ${instanceId}, fetching from Feishu`);
       const rawResponse = await getApprovalInstance(instanceId);
 
-      // Extract all user IDs from timeline
-      const userIds = this.extractUserIds(rawResponse.data.timeline);
+      // Extract all user IDs from timeline and task_list
+      const userIds = this.extractUserIds(
+        rawResponse.data.timeline,
+        rawResponse.data.task_list
+      );
 
       // Batch fetch user information
       let userInfoMap: Map<string, string> | undefined;
@@ -130,36 +133,46 @@ export class ApprovalController {
   }
 
   /**
-   * Extract all user IDs from timeline nodes
+   * Extract all user IDs from timeline nodes and task_list
    * Note: Extracts open_id (not user_id) as that's what Feishu Contact API requires
    */
-  private extractUserIds(timeline: any[]): string[] {
+  private extractUserIds(timeline: any[], taskList?: any[]): string[] {
     const userIds = new Set<string>();
 
-    if (!timeline) return [];
+    // Extract from timeline
+    if (timeline) {
+      timeline.forEach(node => {
+        // Add node open_id (preferred over user_id for Contact API)
+        if (node.open_id) {
+          userIds.add(node.open_id);
+        }
 
-    timeline.forEach(node => {
-      // Add node open_id (preferred over user_id for Contact API)
-      if (node.open_id) {
-        userIds.add(node.open_id);
-      }
+        // Add CC user list
+        if (node.cc_user_list && Array.isArray(node.cc_user_list)) {
+          node.cc_user_list.forEach((cc: any) => {
+            if (cc.open_id) {
+              userIds.add(cc.open_id);
+            }
+          });
+        }
 
-      // Add CC user list
-      if (node.cc_user_list && Array.isArray(node.cc_user_list)) {
-        node.cc_user_list.forEach((cc: any) => {
-          if (cc.open_id) {
-            userIds.add(cc.open_id);
-          }
-        });
-      }
+        // Add open_id_list
+        if (node.open_id_list && Array.isArray(node.open_id_list)) {
+          node.open_id_list.forEach((id: string) => {
+            userIds.add(id);
+          });
+        }
+      });
+    }
 
-      // Add open_id_list
-      if (node.open_id_list && Array.isArray(node.open_id_list)) {
-        node.open_id_list.forEach((id: string) => {
-          userIds.add(id);
-        });
-      }
-    });
+    // Extract from task_list (待审批任务)
+    if (taskList && Array.isArray(taskList)) {
+      taskList.forEach(task => {
+        if (task.open_id) {
+          userIds.add(task.open_id);
+        }
+      });
+    }
 
     return Array.from(userIds);
   }

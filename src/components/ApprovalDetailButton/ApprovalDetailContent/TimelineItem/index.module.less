@@ -1,132 +1,203 @@
 // CSS Modules - 组件样式隔离，禁止全局样式污染
-.container {
-  display: flex;
+.timelineNode {
   position: relative;
-  padding-bottom: var(--spacing-item);
-  box-sizing: border-box;
-  line-height: 1.5;
-  margin: 0;
+  margin-bottom: 20px;
 }
 
-.timeClose {
-  background: var(--bg-time-close);
-  padding: 16px;
-  border-radius: var(--radius-card);
-  border-left: 3px solid var(--color-info);
+.timelineNode:last-child,
+.timelineNode.lastNode {
+  margin-bottom: 0;
 }
 
-.indicator {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-right: 16px;
-}
-
-.dot {
-  width: 12px;
-  height: 12px;
+// 节点指示器圆点
+.nodeDot {
+  position: absolute;
+  left: -34px;
+  top: 6px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
-  flex-shrink: 0;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 2px #d9d9d9;
+  background: #fff;
+  z-index: 2;
 }
 
-.dot.approved {
-  background: var(--color-success);
+// 不同状态的圆点颜色
+.nodeDot.completed {
+  background: #52c41a;
+  box-shadow: 0 0 0 2px #52c41a;
 }
 
-.dot.rejected {
-  background: var(--color-error);
+.nodeDot.pending {
+  background: #1890ff;
+  box-shadow: 0 0 0 2px #1890ff;
+  animation: pulse 2s ease-in-out infinite;
 }
 
-.dot.pending {
-  background: var(--color-pending);
+.nodeDot.cc {
+  background: #faad14;
+  box-shadow: 0 0 0 2px #faad14;
 }
 
-.line {
-  width: 2px;
-  flex-grow: 1;
-  background: #e8e8e8;
-  margin-top: 8px;
+@keyframes pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 2px #1890ff;
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(24, 144, 255, 0.2);
+  }
 }
 
-.content {
-  flex: 1;
-  min-width: 0;
+// 节点内容卡片
+.nodeContent {
+  background: #fafafa;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  padding: 18px 20px;
 }
 
-.header {
+.nodeContent.completed {
+  border-left: 3px solid #52c41a;
+}
+
+.nodeContent.pending {
+  border-left: 3px solid #1890ff;
+  background: #e6f7ff;
+}
+
+.nodeContent.cc {
+  border-left: 3px solid #faad14;
+  background: #fffbe6;
+}
+
+.nodeHeader {
   display: flex;
   justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.nodeTitle {
+  display: flex;
   align-items: center;
-  margin-bottom: 8px;
-}
-
-.nodeName {
-  font-size: var(--font-size-body);
+  gap: 8px;
+  font-size: 15px;
   font-weight: 500;
-  color: #333;
-  line-height: 1.5;
-  margin: 0;
-  padding: 0;
+  color: #262626;
+  flex-wrap: wrap;
+  flex: 1;
 }
 
-.info {
-  margin-bottom: 8px;
+.nodeBadge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: normal;
 }
 
-.infoRow {
+.nodeBadge.approved {
+  background: #f6ffed;
+  color: #52c41a;
+  border: 1px solid #b7eb8f;
+}
+
+.nodeBadge.pending {
+  background: #e6f7ff;
+  color: #1890ff;
+  border: 1px solid #91d5ff;
+}
+
+.nodeBadge.rejected {
+  background: #fff1f0;
+  color: #ff4d4f;
+  border: 1px solid #ffccc7;
+}
+
+.nodeBadge.cc {
+  background: #fffbe6;
+  color: #faad14;
+  border: 1px solid #ffe58f;
+}
+
+.nodeTime {
+  font-size: 13px;
+  color: #8c8c8c;
+  white-space: nowrap;
+  margin-left: 12px;
+}
+
+.nodeInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+  color: #595959;
+}
+
+.nodeInfoRow {
   display: flex;
   gap: 8px;
-  margin-bottom: 4px;
 }
 
-.label {
-  font-size: var(--font-size-small);
+.nodeInfoLabel {
   color: #8c8c8c;
+  min-width: 60px;
+}
+
+.nodeComment {
+  margin-top: 12px;
+  padding: 10px 14px;
+  background: #fff;
+  border-radius: 6px;
+  border: 1px solid #d9d9d9;
+  font-size: 13px;
+  color: #595959;
   line-height: 1.5;
-  margin: 0;
-  padding: 0;
+  word-break: break-word;
 }
 
-.value {
-  font-size: var(--font-size-small);
-  color: #333;
-  line-height: 1.5;
-  margin: 0;
-  padding: 0;
+.nodeComment::before {
+  content: '💬 ';
 }
 
-.time {
-  font-size: var(--font-size-tiny);
-  color: #8c8c8c;
-  line-height: 1.5;
-  margin: 0;
-  padding: 0;
-}
-
-.comment {
-  background: #fafafa;
-  padding: 8px 12px;
-  border-radius: var(--radius-card);
-  margin-top: 8px;
-}
-
-.commentLabel {
-  font-size: var(--font-size-tiny);
-  color: #8c8c8c;
-  margin-right: 8px;
-}
-
-.commentText {
-  font-size: var(--font-size-small);
-  color: #333;
-}
-
-.timeCloseNote {
-  margin-top: 8px;
-  padding: 8px 12px;
+.timeCloseHint {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
   background: #fff7e6;
   border: 1px solid #ffd591;
-  border-radius: var(--radius-card);
-  font-size: var(--font-size-small);
-  color: var(--color-warning);
+  border-radius: 4px;
+  font-size: 12px;
+  color: #fa8c16;
+  margin-left: 8px;
+}
+
+@media (max-width: 768px) {
+  .nodeHeader {
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+  }
+
+  .nodeTitle {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .nodeTime {
+    margin-left: 0;
+  }
+
+  .timeCloseHint {
+    margin-left: 0;
+  }
+
+  .nodeDot {
+    left: -28px;
+  }
 }

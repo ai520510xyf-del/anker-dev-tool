@@ -30,6 +30,7 @@ export interface ProcessedNode {
 
 export interface CCNode {
   id: string;
+  ccNodeName?: string; // Added to store specific CC target description
   ccPersonName: string;
   ccPersonDept?: string;
   ccTime?: string;
@@ -71,6 +72,7 @@ export class TimelineProcessorService {
 
       const timeline = this.processTimeline(
         rawData.timeline || [],
+        rawData.task_list || [],
         userInfoMap
       );
 
@@ -121,15 +123,72 @@ export class TimelineProcessorService {
    */
   private processTimeline(
     nodes: TimelineNode[],
+    tasks: any[],
     userInfoMap?: Map<string, string>
   ): TimelineData {
     const completed: ProcessedNode[] = [];
     const pending: ProcessedNode[] = [];
     const cc: CCNode[] = [];
 
+    // 🔍 DEBUG: Log all raw nodes and tasks
+    logger.debug('🔍 RAW TIMELINE NODES:', {
+      totalNodes: nodes.length,
+      totalTasks: tasks.length,
+      nodes: nodes.map((node, idx) => ({
+        index: idx,
+        type: node.type,
+        status: node.status,
+        node_id: node.node_id,
+        node_name: node.node_name,
+        user_id: node.user_id,
+        open_id: node.open_id,
+        create_time: node.create_time,
+        end_time: node.end_time,
+      })),
+      tasks: tasks.map((task, idx) => ({
+        index: idx,
+        id: task.id,
+        status: task.status,
+        node_name: task.node_name,
+        user_id: task.user_id,
+        open_id: task.open_id,
+      })),
+    });
+
+    // Create a mapping from task index to node name for proper node name resolution
+    // Since the Feishu API doesn't provide index field in task_list, we use the array index
+    const taskIndexToNodeNameMap = new Map<number, string>();
+    tasks.forEach((task, taskIndex) => {
+      logger.debug(`🔍 Checking task ${taskIndex}:`, {
+        id: task.id,
+        nodeName: task.node_name,
+        hasNodeName: !!task.node_name,
+        taskIndex: taskIndex,
+      });
+
+      if (task.node_name) {
+        taskIndexToNodeNameMap.set(taskIndex, task.node_name);
+        logger.debug(
+          `🔍 Adding task index mapping: ${taskIndex} -> ${task.node_name}`
+        );
+      }
+    });
+
+    logger.debug('🔍 TASK INDEX TO NODE NAME MAPPING:', {
+      mapping: Array.from(taskIndexToNodeNameMap.entries()).map(
+        ([taskIndex, nodeName]) => ({
+          taskIndex,
+          nodeName,
+        })
+      ),
+    });
+
     nodes.forEach((node, index) => {
       // Handle CC nodes
       if (node.type === 'CC') {
+        logger.debug(
+          `🔍 Processing CC node [${index}]: ${node.node_name || 'unnamed'}`
+        );
         const ccNode = this.processCCNode(node, index, userInfoMap);
         if (ccNode) {
           cc.push(ccNode);
@@ -139,6 +198,9 @@ export class TimelineProcessorService {
 
       // Skip START nodes (initiator)
       if (node.type === 'START') {
+        logger.debug(
+          `🔍 Skipping START node [${index}]: ${node.node_name || 'unnamed'}`
+        );
         return;
       }
 
@@ -147,15 +209,59 @@ export class TimelineProcessorService {
         const processedNode = this.processApprovalNode(
           node,
           index,
-          userInfoMap
+          userInfoMap,
+          taskIndexToNodeNameMap
         );
+        const isCompleted = this.isCompletedNodeType(node.type);
+
+        logger.debug(`🔍 Processing approval node [${index}]:`, {
+          type: node.type,
+          status: node.status,
+          nodeName: processedNode.nodeName, // Use the resolved node name
+          isCompleted: isCompleted,
+          willAddTo: isCompleted ? 'COMPLETED' : 'PENDING',
+        });
 
         // Map Feishu event types to completed/pending status
-        if (this.isCompletedNodeType(node.type)) {
+        if (isCompleted) {
           completed.push(processedNode);
         } else {
           pending.push(processedNode);
         }
+      } else {
+        logger.debug(`🔍 Skipping non-approval node [${index}]:`, {
+          type: node.type,
+          nodeName: node.node_name,
+        });
+      }
+    });
+
+    // Process task_list for pending approvals
+    tasks.forEach((task, index) => {
+      // Only process PENDING tasks
+      if (task.status === 'PENDING') {
+        logger.debug(`🔍 Processing PENDING task [${index}]:`, {
+          id: task.id,
+          node_name: task.node_name,
+          status: task.status,
+          user_id: task.user_id,
+          open_id: task.open_id,
+        });
+
+        const userId = task.open_id || task.user_id || 'Unknown';
+        const approverName = this.getUserName(userId, userInfoMap);
+
+        const pendingNode: ProcessedNode = {
+          id: task.id || `task-${index}`,
+          nodeName: task.node_name || '待审批',
+          nodeType: 'APPROVAL',
+          approverName: approverName,
+          approverDept: undefined,
+          time: 'PENDING', // Tasks don't have timestamps yet - show as pending
+          status: 'pending',
+        };
+
+        pending.push(pendingNode);
       }
     });
 
@@ -184,10 +290,23 @@ export class TimelineProcessorService {
       }
     }
 
-    logger.debug('Timeline processed', {
+    logger.debug('🔍 TIMELINE PROCESSING COMPLETE:', {
       completed: completed.length,
       pending: pending.length,
       cc: cc.length,
+      completedNodes: completed.map(n => ({
+        nodeName: n.nodeName,
+        approver: n.approverName,
+        status: n.status,
+      })),
+      pendingNodes: pending.map(n => ({
+        nodeName: n.nodeName,
+        approver: n.approverName,
+        status: n.status,
+      })),
+      ccNodes: cc.map(n => ({
+        ccPerson: n.ccPersonName,
+      })),
     });
 
     return { completed, pending, cc };
@@ -231,17 +350,42 @@ export class TimelineProcessorService {
   private processApprovalNode(
     node: TimelineNode,
     index: number,
-    userInfoMap?: Map<string, string>
+    userInfoMap?: Map<string, string>,
+    taskIndexToNodeNameMap?: Map<number, string>
   ): ProcessedNode {
-    const timestamp =
-      node.end_time || node.create_time || new Date().toISOString();
+    // For pending nodes, use special identifier; for completed nodes, use actual timestamp
+    const timestamp = node.end_time || node.create_time || 'PENDING';
     // Use open_id for mapping (preferred over user_id since Contact API uses open_id)
     const userId = node.open_id || node.user_id || 'Unknown';
     const approverName = this.getUserName(userId, userInfoMap);
 
+    // Get the proper node name from task_list mapping first, then fallback to generic name
+    let nodeName = node.node_name;
+
+    // Calculate the corresponding task index for this approval node
+    // Skip START nodes when calculating task mapping (index 0 is usually START, so approval nodes start from index 1)
+    const approvalNodeIndex = index - 1; // Adjust for START node being at index 0
+
+    // Try to get specific node name from task_list mapping by index
+    if (
+      taskIndexToNodeNameMap &&
+      taskIndexToNodeNameMap.has(approvalNodeIndex)
+    ) {
+      nodeName = taskIndexToNodeNameMap.get(approvalNodeIndex)!;
+      logger.debug(
+        `🔍 Using task_list node name for task index ${approvalNodeIndex}: ${nodeName}`
+      );
+    } else if (!nodeName) {
+      // Fallback to generic name based on type
+      nodeName = this.getNodeNameFromType(node.type);
+      logger.debug(
+        `🔍 Using fallback node name for type ${node.type}: ${nodeName}`
+      );
+    }
+
     return {
       id: node.node_id || `node-${index}`,
-      nodeName: node.node_name || this.getNodeNameFromType(node.type),
+      nodeName: nodeName,
       nodeType: 'APPROVAL',
       approverName: approverName,
       approverDept: undefined, // Feishu API doesn't provide department in basic response
@@ -319,6 +463,7 @@ export class TimelineProcessorService {
     index: number,
     userInfoMap?: Map<string, string>
   ): CCNode | null {
+    // CC nodes should show actual timestamp since CC is an instant action that's already completed
     const timestamp = node.end_time || node.create_time;
     if (!timestamp) {
       return null; // Skip CC nodes without timestamp
@@ -333,6 +478,7 @@ export class TimelineProcessorService {
 
       return {
         id: firstCc.cc_id || `cc-${index}`,
+        ccNodeName: node.node_name || '抄送', // Use specific node name from Feishu API
         ccPersonName: ccPersonName,
         ccPersonDept: undefined, // Feishu API doesn't provide department in basic response
         ccTime: this.formatTimestamp(timestamp),
@@ -346,10 +492,53 @@ export class TimelineProcessorService {
 
     return {
       id: node.node_id || `cc-${index}`,
+      ccNodeName: node.node_name || '抄送', // Use specific node name from Feishu API
       ccPersonName: ccPersonName,
       ccPersonDept: undefined, // Feishu API doesn't provide department in basic response
       ccTime: this.formatTimestamp(timestamp),
     };
+  }
+
+  /**
+   * Generate descriptive CC node name based on context
+   */
+  private generateCCNodeName(node: TimelineNode, ccPersonName: string): string {
+    // If node has explicit node_name, use it first
+    if (node.node_name && node.node_name.trim() && node.node_name !== 'CC') {
+      return node.node_name;
+    }
+
+    // Try to generate descriptive name based on context
+    // If person name contains specific patterns, generate targeted description
+    if (ccPersonName && ccPersonName !== 'Unknown') {
+      // Check for common department patterns in names
+      if (ccPersonName.includes('财务') || ccPersonName.includes('Finance')) {
+        return '抄送财务部门';
+      }
+      if (
+        ccPersonName.includes('风控') ||
+        ccPersonName.includes('风险') ||
+        ccPersonName.includes('Risk')
+      ) {
+        return '抄送风险管理部门';
+      }
+      if (ccPersonName.includes('审计') || ccPersonName.includes('Audit')) {
+        return '抄送审计部门';
+      }
+      if (ccPersonName.includes('采购') || ccPersonName.includes('Purchase')) {
+        return '抄送采购部门';
+      }
+      if (ccPersonName.includes('HR') || ccPersonName.includes('人事')) {
+        return '抄送人事部门';
+      }
+
+      // For names that don't match patterns, create generic but specific description
+      const firstName = ccPersonName.split(' ')[0] || ccPersonName;
+      return `抄送${firstName}`;
+    }
+
+    // Default fallback
+    return '抄送';
   }
 
   /**
@@ -378,8 +567,27 @@ export class TimelineProcessorService {
    * Format timestamp to readable date string
    */
   private formatTimestamp(timestamp: string): string {
-    // Feishu timestamps are in milliseconds
-    const date = new Date(parseInt(timestamp));
+    // Handle special case for pending nodes
+    if (timestamp === 'PENDING') {
+      return 'PENDING';
+    }
+
+    let date: Date;
+
+    // Handle different timestamp formats
+    if (timestamp.includes('T') && timestamp.includes('Z')) {
+      // ISO format like "2025-11-16T03:54:31.311Z"
+      date = new Date(timestamp);
+    } else {
+      // Feishu timestamps are in milliseconds (numeric string)
+      date = new Date(parseInt(timestamp));
+    }
+
+    // Validate the date
+    if (isNaN(date.getTime())) {
+      // If timestamp is invalid, use current time
+      date = new Date();
+    }
 
     // Format as YYYY-MM-DD HH:mm:ss
     const year = date.getFullYear();
