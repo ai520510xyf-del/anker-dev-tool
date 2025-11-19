@@ -25,8 +25,8 @@
    - **Start Command**: `npm start`
    - **Plan**: `Free`（免费计划）
 5. 配置环境变量（在 Environment 部分）：
-   - `FEISHU_APP_ID`: `cli_a5a213b8643bd00b`
-   - `FEISHU_APP_SECRET`: `9D3VogVdOyaHvfhfCkY2celMNWvTlyRs`
+   - `FEISHU_APP_ID`: `cli_a99815925213900b`（与参考项目保持一致）
+   - `FEISHU_APP_SECRET`: `OthO9gKLGC3ziEIlMhUC2bd1f7K44P2v`（与参考项目保持一致）
    - `NODE_ENV`: `production`
    - `PORT`: `3000`（Render 会自动设置，但可以显式指定）
    - `LOG_LEVEL`: `info`
