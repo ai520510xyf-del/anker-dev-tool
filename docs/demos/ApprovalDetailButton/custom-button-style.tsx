@@ -15,7 +15,7 @@ const CustomButtonStyleDemo = () => {
   return (
     <Space wrap>
       <ApprovalDetailButton
-        code="447F8A25-3C7F-4B18-8F44-7242680D9477"
+        code="E1B6E4B4-390D-461D-9675-6B1D307EBB5F"
         systemCode="srm"
         systemKey="srm_secret_key_001"
         text="主要按钮"
@@ -24,7 +24,7 @@ const CustomButtonStyleDemo = () => {
         }}
       />
       <ApprovalDetailButton
-        code="447F8A25-3C7F-4B18-8F44-7242680D9477"
+        code="AE1905AD-ABA7-4151-ACD1-9E0CA7F437E0"
         systemCode="srm"
         systemKey="srm_secret_key_001"
         text="虚线按钮"
@@ -33,7 +33,7 @@ const CustomButtonStyleDemo = () => {
         }}
       />
       <ApprovalDetailButton
-        code="447F8A25-3C7F-4B18-8F44-7242680D9477"
+        code="9D4DBE65-C268-4866-AC29-401B562B1ACD"
         systemCode="srm"
         systemKey="srm_secret_key_001"
         text="链接按钮"
@@ -42,7 +42,7 @@ const CustomButtonStyleDemo = () => {
         }}
       />
       <ApprovalDetailButton
-        code="447F8A25-3C7F-4B18-8F44-7242680D9477"
+        code="E1B6E4B4-390D-461D-9675-6B1D307EBB5F"
         systemCode="srm"
         systemKey="srm_secret_key_001"
         text="带图标"
@@ -52,7 +52,7 @@ const CustomButtonStyleDemo = () => {
         }}
       />
       <ApprovalDetailButton
-        code="447F8A25-3C7F-4B18-8F44-7242680D9477"
+        code="E1B6E4B4-390D-461D-9675-6B1D307EBB5F"
         systemCode="srm"
         systemKey="srm_secret_key_001"
         text="查看详情"
@@ -62,7 +62,7 @@ const CustomButtonStyleDemo = () => {
         }}
       />
       <ApprovalDetailButton
-        code="447F8A25-3C7F-4B18-8F44-7242680D9477"
+        code="E1B6E4B4-390D-461D-9675-6B1D307EBB5F"
         systemCode="srm"
         systemKey="srm_secret_key_001"
         text="小尺寸"
@@ -72,7 +72,7 @@ const CustomButtonStyleDemo = () => {
         }}
       />
       <ApprovalDetailButton
-        code="447F8A25-3C7F-4B18-8F44-7242680D9477"
+        code="E1B6E4B4-390D-461D-9675-6B1D307EBB5F"
         systemCode="srm"
         systemKey="srm_secret_key_001"
         text="大尺寸"
@@ -82,7 +82,7 @@ const CustomButtonStyleDemo = () => {
         }}
       />
       <ApprovalDetailButton
-        code="447F8A25-3C7F-4B18-8F44-7242680D9477"
+        code="E1B6E4B4-390D-461D-9675-6B1D307EBB5F"
         systemCode="srm"
         systemKey="srm_secret_key_001"
         text="危险按钮"

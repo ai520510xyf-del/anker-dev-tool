@@ -46,8 +46,8 @@ export const getApiBaseUrl = (): string => {
 
     // 本地开发环境
     if (hostname === 'localhost' || hostname === '127.0.0.1') {
-      return 'http://10.0.200.5:3000/api';
-      // return 'http://localhost:3000/api';
+      // return 'http://10.0.200.5:3000/api';
+      return 'http://localhost:8080/api';
     }
   }
 

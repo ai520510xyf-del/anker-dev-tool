@@ -27,11 +27,15 @@ export function errorHandler(
   // Determine status code
   const statusCode = err.statusCode || err.code || 500;
 
-  // Prepare error response
+  // Prepare error response - 参照Java版本的格式
   const response: ApiResponse = {
-    code: statusCode,
-    message: err.message || 'Internal server error',
+    success: false,
     data: null,
+    error: {
+      message: err.message || 'Internal server error',
+      code: String(statusCode),
+    },
+    timestamp: Date.now(),
   };
 
   // Send error response
@@ -53,9 +57,13 @@ export function notFoundHandler(
   });
 
   const response: ApiResponse = {
-    code: 404,
-    message: 'Route not found',
+    success: false,
     data: null,
+    error: {
+      message: 'Route not found',
+      code: '404',
+    },
+    timestamp: Date.now(),
   };
 
   res.status(404).json(response);

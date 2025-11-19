@@ -20,7 +20,8 @@ export interface ApprovalHeader {
   applicant: string;
   applicantDept?: string;
   applyTime: string;
-  status: ApprovalStatus;
+  // 参照Java版本：支持英文状态和中文状态
+  status: ApprovalStatus | '已通过' | '已拒绝' | '已撤销' | '进行中';
 }
 
 export interface ProcessedNode {

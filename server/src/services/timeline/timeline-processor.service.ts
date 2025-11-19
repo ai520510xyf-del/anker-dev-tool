@@ -34,6 +34,7 @@ export interface CCNode {
   ccPersonName: string;
   ccPersonDept?: string;
   ccTime?: string;
+  status?: string; // 参照Java版本：CC节点状态（completed）
 }
 
 export interface TimelineData {
@@ -49,7 +50,7 @@ export interface ApprovalHeader {
   applicant: string;
   applicantDept?: string;
   applyTime: string;
-  status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELED' | 'DELETED';
+  status: string; // 参照Java版本：返回中文状态（已通过、已拒绝、已撤销、进行中）
 }
 
 export interface ProcessedApprovalData {
@@ -95,7 +96,7 @@ export class TimelineProcessorService {
           applicant: applicant,
           applicantDept: undefined, // Feishu API doesn't provide department in basic response
           applyTime: this.formatTimestamp(rawData.start_time),
-          status: this.mapStatus(rawData.status),
+          status: this.mapStatus(rawData.status), // 返回中文状态
         },
         timeline,
       };
@@ -120,6 +121,7 @@ export class TimelineProcessorService {
 
   /**
    * Process timeline nodes into completed, pending, and CC sections
+   * 参照Java版本的逻辑：从timeline事件中处理审批事件和抄送事件，从task_list中处理待审批任务
    */
   private processTimeline(
     nodes: TimelineNode[],
@@ -129,6 +131,9 @@ export class TimelineProcessorService {
     const completed: ProcessedNode[] = [];
     const pending: ProcessedNode[] = [];
     const cc: CCNode[] = [];
+
+    let approvalId = 1;
+    let ccId = 1;
 
     // 🔍 DEBUG: Log all raw nodes and tasks
     logger.debug('🔍 RAW TIMELINE NODES:', {
@@ -144,6 +149,7 @@ export class TimelineProcessorService {
         open_id: node.open_id,
         create_time: node.create_time,
         end_time: node.end_time,
+        task_id: node.task_id,
       })),
       tasks: tasks.map((task, idx) => ({
         index: idx,
@@ -155,115 +161,109 @@ export class TimelineProcessorService {
       })),
     });
 
-    // Create a mapping from task index to node name for proper node name resolution
-    // Since the Feishu API doesn't provide index field in task_list, we use the array index
-    const taskIndexToNodeNameMap = new Map<number, string>();
-    tasks.forEach((task, taskIndex) => {
-      logger.debug(`🔍 Checking task ${taskIndex}:`, {
-        id: task.id,
-        nodeName: task.node_name,
-        hasNodeName: !!task.node_name,
-        taskIndex: taskIndex,
-      });
+    // 处理timeline事件 - 参照Java版本的逻辑
+    if (nodes && Array.isArray(nodes)) {
+      for (const event of nodes) {
+        const eventType = event.type;
 
-      if (task.node_name) {
-        taskIndexToNodeNameMap.set(taskIndex, task.node_name);
-        logger.debug(
-          `🔍 Adding task index mapping: ${taskIndex} -> ${task.node_name}`
-        );
-      }
-    });
+        // 处理审批事件：通过、移除重复、审批拒绝
+        if (
+          eventType === 'PASS' ||
+          eventType === 'REMOVE_REPEAT' ||
+          eventType === 'REJECT'
+        ) {
+          const createTime = event.create_time;
+          const userId = event.user_id || null;
+          const openId = event.open_id || null;
+          const taskId = event.task_id || null;
 
-    logger.debug('🔍 TASK INDEX TO NODE NAME MAPPING:', {
-      mapping: Array.from(taskIndexToNodeNameMap.entries()).map(
-        ([taskIndex, nodeName]) => ({
-          taskIndex,
-          nodeName,
-        })
-      ),
-    });
+          // 从task_list中根据taskId获取节点名称
+          let nodeName = this.getNodeNameFromTaskList(tasks, taskId);
+          if (!nodeName) {
+            nodeName = '审批节点';
+          }
 
-    nodes.forEach((node, index) => {
-      // Handle CC nodes
-      if (node.type === 'CC') {
-        logger.debug(
-          `🔍 Processing CC node [${index}]: ${node.node_name || 'unnamed'}`
-        );
-        const ccNode = this.processCCNode(node, index, userInfoMap);
-        if (ccNode) {
-          cc.push(ccNode);
+          // 获取审批人姓名
+          const approverId = openId || userId || 'Unknown';
+          const approverName = this.getUserName(approverId, userInfoMap);
+
+          const time = this.formatTimestamp(createTime || '');
+          const status = eventType === 'REJECT' ? 'rejected' : 'approved';
+
+          // 提取评论信息
+          const comment = event.comment || undefined;
+
+          const node: ProcessedNode = {
+            id: String(approvalId++),
+            nodeName: nodeName,
+            nodeType: 'APPROVAL',
+            approverName: approverName,
+            approverDept: undefined,
+            time: time,
+            status: status,
+            comment: comment,
+          };
+
+          completed.push(node);
         }
-        return;
-      }
+        // 处理抄送事件
+        else if (eventType === 'CC') {
+          const createTime = event.create_time;
 
-      // Skip START nodes (initiator)
-      if (node.type === 'START') {
-        logger.debug(
-          `🔍 Skipping START node [${index}]: ${node.node_name || 'unnamed'}`
-        );
-        return;
-      }
+          // 处理cc_user_list数组
+          if (event.cc_user_list && Array.isArray(event.cc_user_list)) {
+            for (const ccUser of event.cc_user_list) {
+              const ccUserId = ccUser.user_id || null;
+              const ccOpenId = ccUser.open_id || null;
 
-      // Handle approval-related nodes (APPROVAL, PASS, REJECT, TRANSFER, etc.)
-      if (this.isApprovalNode(node.type)) {
-        const processedNode = this.processApprovalNode(
-          node,
-          index,
-          userInfoMap,
-          taskIndexToNodeNameMap
-        );
-        const isCompleted = this.isCompletedNodeType(node.type);
+              const ccPersonId = ccOpenId || ccUserId || 'Unknown';
+              const ccPersonName = this.getUserName(ccPersonId, userInfoMap);
+              const ccTime = this.formatTimestamp(createTime || '');
 
-        logger.debug(`🔍 Processing approval node [${index}]:`, {
-          type: node.type,
-          status: node.status,
-          nodeName: processedNode.nodeName, // Use the resolved node name
-          isCompleted: isCompleted,
-          willAddTo: isCompleted ? 'COMPLETED' : 'PENDING',
-        });
+              const ccNode: CCNode = {
+                id: 'cc' + ccId++,
+                ccNodeName: '抄送',
+                ccPersonName: ccPersonName,
+                ccPersonDept: undefined,
+                ccTime: ccTime,
+                status: 'completed', // 参照Java版本：CC节点状态
+              };
 
-        // Map Feishu event types to completed/pending status
-        if (isCompleted) {
-          completed.push(processedNode);
-        } else {
-          pending.push(processedNode);
+              cc.push(ccNode);
+            }
+          }
         }
-      } else {
-        logger.debug(`🔍 Skipping non-approval node [${index}]:`, {
-          type: node.type,
-          nodeName: node.node_name,
-        });
       }
-    });
+    }
 
-    // Process task_list for pending approvals
-    tasks.forEach((task, index) => {
-      // Only process PENDING tasks
-      if (task.status === 'PENDING') {
-        logger.debug(`🔍 Processing PENDING task [${index}]:`, {
-          id: task.id,
-          node_name: task.node_name,
-          status: task.status,
-          user_id: task.user_id,
-          open_id: task.open_id,
-        });
+    // 处理待审批任务 - 从task_list中处理PENDING状态的任务
+    if (tasks && Array.isArray(tasks)) {
+      for (const task of tasks) {
+        const taskStatus = task.status;
+        if (taskStatus === 'PENDING') {
+          const nodeName = task.node_name || '待审批';
+          const userId = task.user_id || null;
+          const openId = task.open_id || null;
+          const startTime = task.start_time || null;
 
-        const userId = task.open_id || task.user_id || 'Unknown';
-        const approverName = this.getUserName(userId, userInfoMap);
+          const approverId = openId || userId || 'Unknown';
+          const approverName = this.getUserName(approverId, userInfoMap);
+          const time = startTime ? this.formatTimestamp(startTime) : 'PENDING';
 
-        const pendingNode: ProcessedNode = {
-          id: task.id || `task-${index}`,
-          nodeName: task.node_name || '待审批',
-          nodeType: 'APPROVAL',
-          approverName: approverName,
-          approverDept: undefined,
-          time: 'PENDING', // Tasks don't have timestamps yet - show as pending
-          status: 'pending',
-        };
+          const node: ProcessedNode = {
+            id: String(approvalId++),
+            nodeName: nodeName,
+            nodeType: 'APPROVAL',
+            approverName: approverName,
+            approverDept: undefined,
+            time: time,
+            status: 'pending',
+          };
 
-        pending.push(pendingNode);
+          pending.push(node);
+        }
       }
-    });
+    }
 
     // Sort completed by time (earliest first)
     completed.sort((a, b) => {
@@ -313,6 +313,26 @@ export class TimelineProcessorService {
   }
 
   /**
+   * 从task_list中根据taskId获取节点名称 - 参照Java版本的逻辑
+   */
+  private getNodeNameFromTaskList(
+    tasks: any[],
+    taskId: string | null
+  ): string | null {
+    if (!taskId || !tasks || !Array.isArray(tasks)) {
+      return null;
+    }
+
+    for (const task of tasks) {
+      if (task.id === taskId) {
+        return task.node_name || null;
+      }
+    }
+
+    return null;
+  }
+
+  /**
    * Parse formatted time string back to timestamp
    */
   private parseFormattedTime(timeStr: string): number {
@@ -321,245 +341,23 @@ export class TimelineProcessorService {
   }
 
   /**
-   * Check if node type is an approval-related action
+   * Map Feishu instance status to processed status - 参照Java版本的逻辑
    */
-  private isApprovalNode(type: FeishuNodeType | string): boolean {
-    const approvalTypes = [
-      'APPROVAL',
-      'PASS',
-      'REJECT',
-      'TRANSFER',
-      'REMOVE_REPEAT',
-      'ADD_APPROVER_BEFORE',
-      'ADD_APPROVER_AFTER',
-    ];
-    return approvalTypes.includes(type);
-  }
-
-  /**
-   * Check if node type represents a completed action
-   */
-  private isCompletedNodeType(type: FeishuNodeType | string): boolean {
-    const completedTypes = ['PASS', 'REJECT', 'TRANSFER', 'REMOVE_REPEAT'];
-    return completedTypes.includes(type);
-  }
-
-  /**
-   * Process approval node
-   */
-  private processApprovalNode(
-    node: TimelineNode,
-    index: number,
-    userInfoMap?: Map<string, string>,
-    taskIndexToNodeNameMap?: Map<number, string>
-  ): ProcessedNode {
-    // For pending nodes, use special identifier; for completed nodes, use actual timestamp
-    const timestamp = node.end_time || node.create_time || 'PENDING';
-    // Use open_id for mapping (preferred over user_id since Contact API uses open_id)
-    const userId = node.open_id || node.user_id || 'Unknown';
-    const approverName = this.getUserName(userId, userInfoMap);
-
-    // Get the proper node name from task_list mapping first, then fallback to generic name
-    let nodeName = node.node_name;
-
-    // Calculate the corresponding task index for this approval node
-    // Skip START nodes when calculating task mapping (index 0 is usually START, so approval nodes start from index 1)
-    const approvalNodeIndex = index - 1; // Adjust for START node being at index 0
-
-    // Try to get specific node name from task_list mapping by index
-    if (
-      taskIndexToNodeNameMap &&
-      taskIndexToNodeNameMap.has(approvalNodeIndex)
-    ) {
-      nodeName = taskIndexToNodeNameMap.get(approvalNodeIndex)!;
-      logger.debug(
-        `🔍 Using task_list node name for task index ${approvalNodeIndex}: ${nodeName}`
-      );
-    } else if (!nodeName) {
-      // Fallback to generic name based on type
-      nodeName = this.getNodeNameFromType(node.type);
-      logger.debug(
-        `🔍 Using fallback node name for type ${node.type}: ${nodeName}`
-      );
+  private mapStatus(status: string): string {
+    if (!status) {
+      return '进行中';
     }
 
-    return {
-      id: node.node_id || `node-${index}`,
-      nodeName: nodeName,
-      nodeType: 'APPROVAL',
-      approverName: approverName,
-      approverDept: undefined, // Feishu API doesn't provide department in basic response
-      time: this.formatTimestamp(timestamp),
-      status: this.mapNodeTypeToDisplayStatus(node.type, node.status),
-      comment: node.comment,
-    };
-  }
-
-  /**
-   * Get friendly node name from Feishu type
-   */
-  private getNodeNameFromType(type: FeishuNodeType | string): string {
-    const typeNames: Record<string, string> = {
-      PASS: '审批通过',
-      REJECT: '审批驳回',
-      TRANSFER: '审批转交',
-      REMOVE_REPEAT: '自动通过',
-      ADD_APPROVER_BEFORE: '前加签',
-      ADD_APPROVER_AFTER: '后加签',
-      APPROVAL: '审批节点',
-    };
-    return typeNames[type] || '审批节点';
-  }
-
-  /**
-   * Map Feishu node type to display status
-   */
-  private mapNodeTypeToDisplayStatus(
-    type: FeishuNodeType | string,
-    status?: NodeStatus
-  ): DisplayStatus {
-    // If status is provided, use it
-    if (status) {
-      return this.mapNodeStatusToDisplay(status);
-    }
-
-    // Otherwise infer from type
-    switch (type) {
-      case 'PASS':
-      case 'REMOVE_REPEAT':
-        return 'approved';
-      case 'REJECT':
-        return 'rejected';
-      case 'TRANSFER':
-        return 'approved'; // Treat transfer as approved
-      default:
-        return 'pending';
-    }
-  }
-
-  /**
-   * Map Feishu node status to display status
-   */
-  private mapNodeStatusToDisplay(status: NodeStatus): DisplayStatus {
-    switch (status) {
+    switch (status.toUpperCase()) {
       case 'APPROVED':
-        return 'approved';
+        return '已通过';
       case 'REJECTED':
-        return 'rejected';
-      case 'TRANSFERRED':
-        return 'approved'; // Treat transferred as approved
-      case 'PENDING':
-      case 'APPROVING':
-      default:
-        return 'pending';
-    }
-  }
-
-  /**
-   * Process CC node
-   */
-  private processCCNode(
-    node: TimelineNode,
-    index: number,
-    userInfoMap?: Map<string, string>
-  ): CCNode | null {
-    // CC nodes should show actual timestamp since CC is an instant action that's already completed
-    const timestamp = node.end_time || node.create_time;
-    if (!timestamp) {
-      return null; // Skip CC nodes without timestamp
-    }
-
-    // Handle cc_user_list if available
-    if (node.cc_user_list && node.cc_user_list.length > 0) {
-      const firstCc = node.cc_user_list[0];
-      // Use open_id for mapping (preferred over user_id since Contact API uses open_id)
-      const userId = firstCc.open_id || firstCc.user_id || 'Unknown';
-      const ccPersonName = this.getUserName(userId, userInfoMap);
-
-      return {
-        id: firstCc.cc_id || `cc-${index}`,
-        ccNodeName: node.node_name || '抄送', // Use specific node name from Feishu API
-        ccPersonName: ccPersonName,
-        ccPersonDept: undefined, // Feishu API doesn't provide department in basic response
-        ccTime: this.formatTimestamp(timestamp),
-      };
-    }
-
-    // Fallback to single user
-    // Use open_id for mapping (preferred over user_id since Contact API uses open_id)
-    const userId = node.open_id || node.user_id || 'Unknown';
-    const ccPersonName = this.getUserName(userId, userInfoMap);
-
-    return {
-      id: node.node_id || `cc-${index}`,
-      ccNodeName: node.node_name || '抄送', // Use specific node name from Feishu API
-      ccPersonName: ccPersonName,
-      ccPersonDept: undefined, // Feishu API doesn't provide department in basic response
-      ccTime: this.formatTimestamp(timestamp),
-    };
-  }
-
-  /**
-   * Generate descriptive CC node name based on context
-   */
-  private generateCCNodeName(node: TimelineNode, ccPersonName: string): string {
-    // If node has explicit node_name, use it first
-    if (node.node_name && node.node_name.trim() && node.node_name !== 'CC') {
-      return node.node_name;
-    }
-
-    // Try to generate descriptive name based on context
-    // If person name contains specific patterns, generate targeted description
-    if (ccPersonName && ccPersonName !== 'Unknown') {
-      // Check for common department patterns in names
-      if (ccPersonName.includes('财务') || ccPersonName.includes('Finance')) {
-        return '抄送财务部门';
-      }
-      if (
-        ccPersonName.includes('风控') ||
-        ccPersonName.includes('风险') ||
-        ccPersonName.includes('Risk')
-      ) {
-        return '抄送风险管理部门';
-      }
-      if (ccPersonName.includes('审计') || ccPersonName.includes('Audit')) {
-        return '抄送审计部门';
-      }
-      if (ccPersonName.includes('采购') || ccPersonName.includes('Purchase')) {
-        return '抄送采购部门';
-      }
-      if (ccPersonName.includes('HR') || ccPersonName.includes('人事')) {
-        return '抄送人事部门';
-      }
-
-      // For names that don't match patterns, create generic but specific description
-      const firstName = ccPersonName.split(' ')[0] || ccPersonName;
-      return `抄送${firstName}`;
-    }
-
-    // Default fallback
-    return '抄送';
-  }
-
-  /**
-   * Map Feishu instance status to processed status
-   */
-  private mapStatus(
-    status: string
-  ): 'APPROVED' | 'REJECTED' | 'PENDING' | 'CANCELED' | 'DELETED' {
-    switch (status) {
-      case 'APPROVED':
-        return 'APPROVED';
-      case 'REJECTED':
-        return 'REJECTED';
+        return '已拒绝';
       case 'CANCELED':
-        return 'CANCELED';
-      case 'DELETED':
-        return 'DELETED';
+        return '已撤销';
       case 'PENDING':
-      case 'PROCESSING':
       default:
-        return 'PENDING';
+        return '进行中';
     }
   }
 

@@ -1,46 +1,26 @@
 /**
  * Processed Data Types
- * Matches frontend contract specifications
+ * 类型定义在 timeline-processor.service.ts 中，这里只导出 ApiResponse
  */
 
-export type ApprovalStatus = 'APPROVED' | 'REJECTED' | 'PENDING' | 'CANCELED';
-export type NodeStatus = 'APPROVED' | 'REJECTED' | 'PENDING' | 'TRANSFERRED';
+// 导出所有相关类型
+export type {
+  ProcessedApprovalData,
+  ApprovalHeader,
+  TimelineData,
+  ProcessedNode,
+  CCNode,
+} from '../services/timeline/timeline-processor.service';
 
-export interface ProcessedNode {
-  id: string;
-  type: 'approval' | 'cc';
-  name: string;
-  status: NodeStatus;
-  approver: string;
-  timestamp: string | null;
-  comment: string | null;
-}
-
-export interface CCNode {
-  id: string;
-  name: string;
-  ccPerson: string;
-  timestamp: string;
-}
-
-export interface TimelineData {
-  completed: ProcessedNode[];
-  pending: ProcessedNode[];
-  cc: CCNode[];
-}
-
-export interface ProcessedApprovalData {
-  instance_code: string;
-  header: {
-    status: ApprovalStatus;
-    startTime: string;
-    endTime: string | null;
-  };
-  timeline: TimelineData;
-}
-
+/**
+ * Standard API response wrapper - 参照Java版本的格式
+ */
 export interface ApiResponse<T = any> {
-  code: number;
-  message: string;
+  success: boolean;
   data: T | null;
+  error?: {
+    message: string;
+    code?: string;
+  };
+  timestamp: number;
 }

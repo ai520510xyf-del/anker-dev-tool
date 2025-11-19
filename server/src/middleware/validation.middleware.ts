@@ -23,9 +23,13 @@ export function validateInstanceId(
     });
 
     const response: ApiResponse = {
-      code: 400,
-      message: 'Invalid request: instanceId is required',
+      success: false,
       data: null,
+      error: {
+        message: 'Invalid request: instanceId is required',
+        code: '400',
+      },
+      timestamp: Date.now(),
     };
 
     res.status(400).json(response);
@@ -41,9 +45,13 @@ export function validateInstanceId(
     });
 
     const response: ApiResponse = {
-      code: 400,
-      message: 'Invalid instanceId format',
+      success: false,
       data: null,
+      error: {
+        message: 'Invalid instanceId format',
+        code: '400',
+      },
+      timestamp: Date.now(),
     };
 
     res.status(400).json(response);

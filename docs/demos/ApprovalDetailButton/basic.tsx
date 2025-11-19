@@ -8,7 +8,7 @@ import { ApprovalDetailButton } from 'cl-dev-tool';
 const BasicDemo = () => {
   return (
     <ApprovalDetailButton
-      code="447F8A25-3C7F-4B18-8F44-7242680D9477"
+      code="2E313535-5ED7-4D92-95D8-51E85D7298EB"
       systemCode="srm"
       systemKey="srm_secret_key_001"
     />

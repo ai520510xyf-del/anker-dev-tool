@@ -27,7 +27,7 @@ const WithCallbacksDemo = () => {
   return (
     <Space direction="vertical">
       <ApprovalDetailButton
-        code="447F8A25-3C7F-4B18-8F44-7242680D9477"
+        code="E1B6E4B4-390D-461D-9675-6B1D307EBB5F"
         systemCode="srm"
         systemKey="srm_secret_key_001"
         onClose={handleClose}

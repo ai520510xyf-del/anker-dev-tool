@@ -68,13 +68,9 @@ app.get('/', (req, res) => {
   });
 });
 
-// Health check endpoint
+// Health check endpoint - 参照Java版本的格式
 app.get('/health', (req, res) => {
-  res.json({
-    status: 'ok',
-    timestamp: new Date().toISOString(),
-    environment: config.server.nodeEnv,
-  });
+  res.send('Feishu Approval Visualization Service is running');
 });
 
 // API routes

@@ -43,9 +43,9 @@ export class ApprovalController {
       if (cachedData) {
         logger.debug(`Cache hit: ${instanceId}`);
         const response: ApiResponse<ProcessedApprovalData> = {
-          code: 200,
-          message: 'Success (cached)',
+          success: true,
           data: cachedData,
+          timestamp: Date.now(),
         };
         res.json(response);
         return;
@@ -91,8 +91,8 @@ export class ApprovalController {
         logger.debug(`Data cached: ${instanceId} (TTL: ${ttl}s)`);
       }
 
-      // Return response in frontend-expected format
-      const response = {
+      // Return response in Java version format (ApiResponse)
+      const response: ApiResponse<ProcessedApprovalData> = {
         success: true,
         data: processedData,
         timestamp: Date.now(),
@@ -117,13 +117,13 @@ export class ApprovalController {
           ? error.code
           : 500;
 
-      // Return error response in frontend-expected format
-      const response = {
+      // Return error response in Java version format (ApiResponse)
+      const response: ApiResponse<null> = {
         success: false,
+        data: null,
         error: {
+          message: error.message || '获取审批数据失败',
           code: error.code || 'UNKNOWN_ERROR',
-          message: error.message || 'Failed to fetch approval data',
-          details: error,
         },
         timestamp: Date.now(),
       };

@@ -199,32 +199,44 @@ const ApprovalDetailContent: React.FC<ApprovalDetailContentProps> = ({
     }
   }, [error, onError]);
 
-  // 获取状态徽章类名
+  // 获取状态徽章类名 - 参照Java版本，支持多种状态格式
   const getStatusBadgeClass = (status: string) => {
-    switch (status) {
-      case 'APPROVED':
-        return styles.approved;
-      case 'REJECTED':
-        return styles.rejected;
-      case 'PENDING':
-      default:
-        return styles.pending;
+    const upperStatus = status.toUpperCase();
+    if (
+      upperStatus === 'APPROVED' ||
+      status === '已完成' ||
+      status === '已通过'
+    ) {
+      return styles.approved;
     }
+    if (upperStatus === 'REJECTED' || status === '已拒绝') {
+      return styles.rejected;
+    }
+    if (upperStatus === 'CANCELED' || status === '已撤销') {
+      return styles.canceled || styles.pending;
+    }
+    // PENDING, 审批中, 进行中
+    return styles.pending;
   };
 
-  // 获取状态文本
+  // 获取状态文本 - 参照Java版本，支持中文状态
   const getStatusText = (status: string) => {
-    switch (status) {
-      case 'APPROVED':
-        return '✓ 审批通过';
-      case 'REJECTED':
-        return '✗ 审批拒绝';
-      case 'CANCELED':
-        return '⊘ 已撤销';
-      case 'PENDING':
-      default:
-        return '⏳ 审批进行中';
+    const upperStatus = status.toUpperCase();
+    if (
+      upperStatus === 'APPROVED' ||
+      status === '已完成' ||
+      status === '已通过'
+    ) {
+      return '✓ 审批通过';
     }
+    if (upperStatus === 'REJECTED' || status === '已拒绝') {
+      return '✗ 审批拒绝';
+    }
+    if (upperStatus === 'CANCELED' || status === '已撤销') {
+      return '⊘ 已撤销';
+    }
+    // PENDING, 审批中, 进行中
+    return '⏳ 审批进行中';
   };
 
   // 获取节点徽章类名
@@ -422,7 +434,7 @@ const ApprovalDetailContent: React.FC<ApprovalDetailContentProps> = ({
         <div className={styles.headerInfo}>
           {(data.header.serialNumber || data.header.instanceId) && (
             <div className={styles.headerInfoItem}>
-              <span className={styles.headerInfoLabel}>审批单号:</span>
+              <span className={styles.headerInfoLabel}>申批单号:</span>
               <span className={styles.headerInfoValue}>
                 {data.header.serialNumber || data.header.instanceId}
               </span>
