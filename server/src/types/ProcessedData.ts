@@ -18,9 +18,9 @@ export type {
 export interface ApiResponse<T = any> {
   success: boolean;
   data: T | null;
-  error?: {
+  error: {
     message: string;
     code?: string;
-  };
+  } | null;
   timestamp: number;
 }

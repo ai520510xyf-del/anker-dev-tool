@@ -116,6 +116,28 @@ export async function getApprovalInstance(
             headers: error.response.headers,
           });
 
+          // 先检查响应体中的错误码（Feishu API可能返回HTTP 200但code不为0，也可能返回HTTP 4xx/5xx）
+          const responseData = error.response.data;
+          if (
+            responseData &&
+            typeof responseData === 'object' &&
+            'code' in responseData
+          ) {
+            const feishuCode = responseData.code;
+            const feishuMsg = responseData.msg || '未知错误';
+
+            // 处理Feishu API的错误码
+            if (feishuCode === 400008) {
+              throw new Error('审批流程不存在或无权限访问');
+            } else if (feishuCode === 400007) {
+              throw new Error('审批实例编码格式不正确');
+            } else if (feishuCode === 99991664) {
+              throw new Error('应用未获得审批权限');
+            } else {
+              throw new Error(`获取审批数据失败: ${feishuMsg}`);
+            }
+          }
+
           // Handle HTTP status errors with user-friendly messages
           if (error.response.status === 400) {
             throw new Error('审批流程不存在或参数错误');

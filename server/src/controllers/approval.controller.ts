@@ -45,6 +45,7 @@ export class ApprovalController {
         const response: ApiResponse<ProcessedApprovalData> = {
           success: true,
           data: cachedData,
+          error: null, // 参照Java版本：成功时error为null
           timestamp: Date.now(),
         };
         res.json(response);
@@ -95,6 +96,7 @@ export class ApprovalController {
       const response: ApiResponse<ProcessedApprovalData> = {
         success: true,
         data: processedData,
+        error: null, // 参照Java版本：成功时error为null
         timestamp: Date.now(),
       };
 
