@@ -21,15 +21,13 @@ export async function getApprovalInstance(
 
       logger.info(`Fetching approval instance: ${instanceId}`);
 
+      // 参照Java版本：不传递locale参数，直接调用API
       const response = await axios.get<FeishuApprovalResponse>(
         `${config.feishu.baseUrl}${config.feishu.approvalEndpoint}/${instanceId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json',
-          },
-          params: {
-            locale: 'zh-CN',
           },
           timeout: config.feishu.timeout,
         }
